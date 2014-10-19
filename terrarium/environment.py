@@ -203,6 +203,7 @@ class Environment(object):
                     result = result.replace(expanded_vars[var_name],
                                             var_format(var_name))
                     compressing = True
+                    print result
                     break
 
         return result
