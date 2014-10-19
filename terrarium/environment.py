@@ -202,10 +202,12 @@ class Environment(object):
             compressing = False
             for var_name in sorted_var_names:
                 if expanded_vars[var_name] in result:
+                    print 'Matched: "{0}" in {1}'.format(expanded_vars[var_name], result)
+                    print 'Replacing: {0} - {1}'.format(expanded_vars[var_name], var_format(var_name))
                     result = result.replace(expanded_vars[var_name],
                                             var_format(var_name))
+                    print 'Result: {0}'.format(result)
                     compressing = True
-                    print result
                     break
 
         return result
