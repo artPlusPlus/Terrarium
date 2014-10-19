@@ -195,6 +195,8 @@ class Environment(object):
             expanded_vars, reverse=True,
             key=lambda var_name: len(expanded_vars[var_name]))
 
+        print '\nVARS:\n\t{0}'.format('\n\t'.join(['{0} - {1}'.format(var, expanded_vars[var]) for var in sorted_var_names]))
+
         compressing = True
         while compressing:
             compressing = False
