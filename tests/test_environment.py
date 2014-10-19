@@ -31,7 +31,7 @@ class TestEnvironment(object):
         self._environment.set_var('BAR', '$FOO/bar')
         self._environment.set_var('BAZ', '${BAR}/baz')
 
-        result = self._environment.compress('C:/foo/bar/baz/end', var_format='${0}', use_runtime_environment=False)
+        result = self._environment.compress('C:/foo/bar/baz/end', var_format='${0}', use_runtime_environment=True)
         assert result == '$BAZ/end'
 
 if __name__ == '__main__':
