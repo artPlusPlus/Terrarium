@@ -50,7 +50,10 @@ class Environment(object):
         Returns:
             None
         """
-
+        value = str(value)
+        if not value:
+            msg = "Error setting {0}: Value cannot be empty.".format(name)
+            raise ValueError(msg)
         while True:
             match = self._VAR_PATTERN.search(value)
             if not match:
@@ -191,11 +194,17 @@ class Environment(object):
             for name, value in os.environ.iteritems():
                 expanded_vars[name] = self.expand(value, overrides=overrides,
                                                   use_runtime_environment=True)
+
         sorted_var_names = sorted(
             expanded_vars, reverse=True,
-            key=lambda var_name: len(expanded_vars[var_name]))
+            key=lambda vn: len(expanded_vars[vn]))
 
-        print '\nVARS:\n\t{0}'.format('\n\t'.join(['{0} - {1}'.format(var, expanded_vars[var]) for var in sorted_var_names]))
+        while not expanded_vars[sorted_var_names[-1]]:
+            del expanded_vars[sorted_var_names.pop()]
+
+        print 'VARS:'
+        for var_name in sorted_var_names:
+            print '\t{0} - {1}'.format(var_name, expanded_vars[var_name])
 
         compressing = True
         while compressing:
