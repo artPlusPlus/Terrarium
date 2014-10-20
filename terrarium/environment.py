@@ -27,8 +27,8 @@ class Environment(object):
 
         Args:
             name (str): A user-friendly name describing the environment.
-            parent (Environment): An :class:`Environment` instance from which this instance will
-                inherit settings.
+            parent (Environment): An :class:`Environment` instance from which
+                this instance will inherit settings.
 
         Returns:
             None
@@ -58,7 +58,8 @@ class Environment(object):
             match = self._VAR_PATTERN.search(value)
             if not match:
                 break
-            value = value.replace(match.group(0), self._INTERNAL_VAR_FORMAT(match.group('var')))
+            value = value.replace(
+                match.group(0), self._INTERNAL_VAR_FORMAT(match.group('var')))
         self._vars[name] = value
 
     def get_setting(self, name):
@@ -186,10 +187,12 @@ class Environment(object):
             overrides = {}
 
         expanded_vars = {}
+
         for name, value in self._vars.iteritems():
             expanded_vars[name] = self.expand(
                 value, overrides=overrides,
                 use_runtime_environment=use_runtime_environment)
+
         if use_runtime_environment:
             for name, value in os.environ.iteritems():
                 expanded_vars[name] = self.expand(value, overrides=overrides,
@@ -202,20 +205,13 @@ class Environment(object):
         while not expanded_vars[sorted_var_names[-1]]:
             del expanded_vars[sorted_var_names.pop()]
 
-        print 'VARS:'
-        for var_name in sorted_var_names:
-            print '\t{0} - {1}'.format(var_name, expanded_vars[var_name])
-
         compressing = True
         while compressing:
             compressing = False
             for var_name in sorted_var_names:
                 if expanded_vars[var_name] in result:
-                    print 'Matched: "{0}" in {1}'.format(expanded_vars[var_name], result)
-                    print 'Replacing: {0} - {1}'.format(expanded_vars[var_name], var_format(var_name))
                     result = result.replace(expanded_vars[var_name],
                                             var_format(var_name))
-                    print 'Result: {0}'.format(result)
                     compressing = True
                     break
 
