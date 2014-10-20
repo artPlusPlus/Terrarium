@@ -1,1 +1,1 @@
-sphinxcontrib-napolean == 0.2.8
+sphinxcontrib-napoleon == 0.2.8
