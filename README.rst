@@ -13,8 +13,8 @@ Terrarium is offered under the MIT License.
 Authors
 -------
 
-Initial Concept: `Judah Baron`_
-Implementation: `Matt Robinson`_
+|  Initial Concept: `Judah Baron`_
+|  Implementation: `Matt Robinson`_
 
 .. _Judah Baron: https://www.linkedin.com/pub/judah-baron/0/321/865
 .. _Matt Robinson: http://technicalartisan.com
