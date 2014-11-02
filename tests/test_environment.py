@@ -1,5 +1,5 @@
 import gc
-import time
+import os
 
 import pytest
 
@@ -30,7 +30,7 @@ class TestEnvironment(object):
         environment.set_var('BAZ', '${BAR}/baz')
 
         result = environment.expand('%BAZ%/end')
-        assert result == 'C:\\foo\\bar\\baz\\end'
+        assert result == os.path.normpath('C:/foo/bar/baz/end')
 
     def test_environment_compression(self):
         environment = terrarium.Environment('test')
@@ -40,7 +40,7 @@ class TestEnvironment(object):
         environment.set_var('BAZ', '${BAR}/baz')
 
         result = environment.compress('C:/foo/bar/baz/end', var_format='${0}')
-        assert result == '$BAZ\\end'
+        assert result == os.path.normpath('$BAZ/end')
 
     def test_environment_expansion_with_empty_value(self):
         environment = terrarium.Environment('test')
@@ -53,7 +53,7 @@ class TestEnvironment(object):
         environment._vars['EMPTY'] = ''
 
         result = environment.expand('%BAZ%/end')
-        assert result == 'C:\\foo\\bar\\baz\\end'
+        assert result == os.path.normpath('C:/foo/bar/baz/end')
 
     def test_environment_compression_with_empty_value(self):
         environment = terrarium.Environment('test')
@@ -66,7 +66,7 @@ class TestEnvironment(object):
         environment._vars['EMPTY'] = ''
 
         result = environment.compress('C:/foo/bar/baz/end', var_format='${0}')
-        assert result == '$BAZ\\end'
+        assert result == os.path.normpath('$BAZ/end')
 
     def test_environment_tracking(self):
         env_foo = terrarium.Environment('Foo')

@@ -1,4 +1,5 @@
 import gc
+import os
 
 import pytest
 
@@ -39,7 +40,7 @@ class TestApp(object):
 
         app = terrarium.App('TestApp', '%ROOT%/%APP_DIR%', 'Foo_%APP_VERSION%.exe')
 
-        assert app.resolve_path(environment) == 'C:\\Appz\\Foo\\Foo_2015.exe'
+        assert app.resolve_path(environment) == os.path.normpath('C:/Appz/Foo/Foo_2015.exe')
 
 if __name__ == '__main__':
     pytest.main()
