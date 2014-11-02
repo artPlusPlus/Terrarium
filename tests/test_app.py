@@ -22,8 +22,10 @@ class TestApp(object):
         assert len(terrarium.App.all_apps()) == 3
         assert {'Foo', 'Bar', 'Baz'} == set([app.name for app in terrarium.App.all_apps()])
 
+        app_bar = None
         del app_bar
         gc.collect()
+
         with pytest.raises(UnboundLocalError):
             assert app_bar is None
         assert len(terrarium.App.all_apps()) == 2

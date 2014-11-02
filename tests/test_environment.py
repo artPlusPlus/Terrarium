@@ -1,3 +1,6 @@
+import gc
+import time
+
 import pytest
 
 import terrarium
@@ -73,7 +76,13 @@ class TestEnvironment(object):
         assert len(terrarium.Environment.all_environments()) == 3
         assert {'Foo', 'Bar', 'Baz'} == set([env.name for env in terrarium.Environment.all_environments()])
 
+        env_bar = None
         del env_bar
+        gc.collect()
+
+        with pytest.raises(UnboundLocalError):
+            assert env_bar is None
+
         assert len(terrarium.Environment.all_environments()) == 2
         assert {'Foo', 'Baz'} == set([env.name for env in terrarium.Environment.all_environments()])
 
