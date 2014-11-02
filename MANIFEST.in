@@ -1,0 +1,4 @@
+include DESCRIPTION.rst
+include terrarium/*.py
+include tests/*.py
+include MANIFEST.in
