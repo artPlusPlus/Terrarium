@@ -69,22 +69,18 @@ class TestEnvironment(object):
         assert result == os.path.normpath('$BAZ/end')
 
     def test_environment_tracking(self):
-        env_foo = terrarium.Environment('Foo')
-        env_bar = terrarium.Environment('Bar')
-        env_baz = terrarium.Environment('Baz')
+        environment_names = {'Foo', 'Bar', 'Baz'}
+        environments = set([terrarium.Environment(en) for en in environment_names])
 
-        assert len(terrarium.Environment.all_environments()) == 3
-        assert {'Foo', 'Bar', 'Baz'} == set([env.name for env in terrarium.Environment.all_environments()])
+        assert len(terrarium.Environment.all_environments()) == len(environments)
+        assert set([env.name for env in terrarium.Environment.all_environments()]) == environment_names
 
-        env_bar = None
-        del env_bar
+        environment_names.remove('Bar')
+        environments = set([e for e in environments if e.name != 'Bar'])
         gc.collect()
 
-        with pytest.raises(UnboundLocalError):
-            assert env_bar is None
-
-        assert len(terrarium.Environment.all_environments()) == 2
-        assert {'Foo', 'Baz'} == set([env.name for env in terrarium.Environment.all_environments()])
+        assert len(terrarium.Environment.all_environments()) == len(environments)
+        assert set([env.name for env in terrarium.Environment.all_environments()]) == environment_names
 
 
 if __name__ == '__main__':
