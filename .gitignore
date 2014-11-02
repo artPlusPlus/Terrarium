@@ -52,3 +52,7 @@ Temporary Items
 # Python
 *.pyc
 *.pyo
+
+# Distribution
+/dist/
+/Terrarium.egg-info/
