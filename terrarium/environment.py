@@ -1,17 +1,19 @@
 import os
 import re
+import weakref
+
+
+_VAR_PATTERN = re.compile(r'([%$]\{*(?P<var>\w*)[%}]?)')
+_VAR_FORMATS = ('%{0}%'.format,
+                '${0}'.format,
+                '${{{0}}}'.format)
+_INTERNAL_VAR_PATTERN = re.compile(r'(@\[(?P<var>\w*)\]@)')
+_INTERNAL_VAR_FORMAT = '@[{0}]@'.format
 
 
 class Environment(object):
     """ Represents a Runtime Environment for an App. """
-
-    _VAR_PATTERN = re.compile(r'([%$]\{*(?P<var>\w*)[%}]?)')
-    _VAR_FORMATS = ('%{0}%'.format,
-                    '${0}'.format,
-                    '${{{0}}}'.format)
-
-    _INTERNAL_VAR_PATTERN = re.compile(r'(@\[(?P<var>\w*)\]@)')
-    _INTERNAL_VAR_FORMAT = '@[{0}]@'.format
+    _environments = weakref.WeakSet()
 
     @property
     def name(self):
@@ -39,6 +41,14 @@ class Environment(object):
         self._parent = parent
         self._vars = {}
 
+        self.__class__._environments.add(self)
+
+    @classmethod
+    def all_environments(cls):
+        result = set()
+        result.update(cls._environments)
+        return result
+
     def set_var(self, name, value):
         """
         Sets the value of an Environment variable
@@ -55,12 +65,12 @@ class Environment(object):
             msg = "Error setting {0}: Value cannot be empty.".format(name)
             raise ValueError(msg)
         while True:
-            match = self._VAR_PATTERN.search(value)
+            match = _VAR_PATTERN.search(value)
             if not match:
                 break
             value = value.replace(
-                match.group(0), self._INTERNAL_VAR_FORMAT(match.group('var')))
-        self._vars[name] = value
+                match.group(0), _INTERNAL_VAR_FORMAT(match.group('var')))
+        self._vars[name] = os.path.normpath(value)
 
     def get_setting(self, name):
         """
@@ -107,6 +117,8 @@ class Environment(object):
         Return:
             The argument with environment variables expanded.
         """
+        value = os.path.normpath(value)
+
         result = str(value)
 
         if not overrides:
@@ -120,7 +132,7 @@ class Environment(object):
         expanding = True
         while expanding:
             expanding = False
-            for match in self._VAR_PATTERN.finditer(result):
+            for match in _VAR_PATTERN.finditer(result):
                 var, var_name = match.groups()
                 try:
                     value = overrides[var_name]
@@ -131,7 +143,7 @@ class Environment(object):
                         continue
                 result = result.replace(var, value)
                 expanding = True
-            for match in self._INTERNAL_VAR_PATTERN.findall(result):
+            for match in _INTERNAL_VAR_PATTERN.findall(result):
                 var, var_name = match
                 result = result.replace(var, self._vars[var_name])
                 expanding = True
@@ -139,7 +151,7 @@ class Environment(object):
         expanding = True
         while expanding:
             expanding = False
-            for match in self._INTERNAL_VAR_PATTERN.finditer(result):
+            for match in _INTERNAL_VAR_PATTERN.finditer(result):
                 var, var_name = match.groups()
                 result = result.replace(var, var_format(var_name))
                 expanding = True
@@ -149,7 +161,7 @@ class Environment(object):
             use_runtime_environment = r != result
             result = r
 
-        return result
+        return os.path.normpath(result)
 
     def compress(self, value, var_format=None, use_runtime_environment=True,
                  overrides=None):
@@ -176,6 +188,8 @@ class Environment(object):
         Return:
             The argument with environment variables condensed.
         """
+        value = os.path.normpath(value)
+
         result = str(value)
 
         if not var_format:
@@ -215,7 +229,7 @@ class Environment(object):
                     compressing = True
                     break
 
-        return result
+        return os.path.normpath(result)
 
     def apply(self, overrides=None):
         """

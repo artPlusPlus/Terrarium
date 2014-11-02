@@ -4,15 +4,6 @@
 
 """
 
-# === IMPORTS ===
-# Built-Ins
-
-# Third-Party
-
-# External
-
-# Internal
-
 from .app import App
 from .environment import Environment
 
