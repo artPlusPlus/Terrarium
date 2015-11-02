@@ -1,11 +1,11 @@
-import os
-import weakref
-
-
 class App(object):
-    """ Represents an executable application. """
-    _apps = weakref.WeakSet()
+    """
+    Represents an executable application.
 
+    Apps handle the path to an executable location. This path data is stored in two parts:
+        - The 'location' is the path to the directory containing the executable
+        - The 'executable' is he executable file name.
+    """
     @property
     def name(self):
         """
@@ -19,6 +19,17 @@ class App(object):
         """
         return self._name
 
+    @name.setter
+    def name(self, value):
+        if value:
+            value = unicode(value).strip()
+            if value:
+                self._name = value
+            else:
+                raise ValueError('App name cannot be empty.')
+        else:
+            raise ValueError('App name must be a non-empty string.')
+
     @property
     def location(self):
         """
@@ -30,6 +41,17 @@ class App(object):
             The compressed location of the Apps executable.
         """
         return self._location
+
+    @location.setter
+    def location(self, value):
+        if value:
+            value = unicode(value).strip()
+            if value:
+                self._location = value
+            else:
+                raise ValueError('App location cannot be empty.')
+        else:
+            raise ValueError('App location must be a non-empty string.')
 
     @property
     def executable(self):
@@ -43,7 +65,35 @@ class App(object):
         """
         return self._executable
 
-    def __init__(self, name, location, executable):
+    @executable.setter
+    def executable(self, value):
+        if value:
+            value = unicode(value).strip()
+            if value:
+                self._executable = value
+            else:
+                raise ValueError('App executable cannot be empty.')
+        else:
+            raise ValueError('App executable must be a non-empty string.')
+
+    @property
+    def description(self):
+        """
+        Description of the App.
+        """
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        if value:
+            value = unicode(value).strip()
+            if not value:
+                value = None
+        else:
+            value = None
+        self._description = value
+
+    def __init__(self, name, location, executable, description=None):
         """
         Initializes an instance of an App.
 
@@ -56,54 +106,22 @@ class App(object):
         """
         super(App, self).__init__()
 
-        self._name = name
-        self._location = location
-        self._executable = executable
+        self._name = None
+        self._location = None
+        self._executable = None
+        self._description = None
 
-        self.__class__._apps.add(self)
+        self.name = name
+        self.location = location
+        self.executable = executable
+        self.description = description
 
     def __eq__(self, other):
-        my_raw_path = os.path.join(self.location, self.executable)
         try:
-            other_raw_path = os.path.join(other.location, other.executable)
-            return my_raw_path == other_raw_path
+            return all([self.location == other.location,
+                        self.executable == other.executable])
         except AttributeError:
-            pass
-        return False
+            return False
 
     def __ne__(self, other):
         return not self.__eq__(other)
-
-    @classmethod
-    def all_apps(cls):
-        """
-        Provides a set containing all known App instances.
-
-        Return:
-            A set of App instances.
-        """
-        result = set()
-        result.update(cls._apps)
-        return result
-
-    def resolve_path(self, environment, use_runtime=True):
-        """
-        Resolves the path of the App using the provided environment.
-
-        Args:
-            environment (terrarium.Environment): This environment will be used
-                to resolve environment variables found in the Apps location
-                and name.
-            use_runtime (bool): If true, the process runtime will be used to
-                further resolve any environment variables not handled by the
-                terrarium.Environment instance.
-
-        Return:
-            A string with all understood environment variables resolved.
-        """
-        location = environment.expand(self._location,
-                                      use_runtime_environment=use_runtime)
-        executable = environment.expand(self._executable,
-                                        use_runtime_environment=use_runtime)
-
-        return os.path.normpath(os.path.join(location, executable))

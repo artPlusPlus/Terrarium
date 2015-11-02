@@ -46,6 +46,9 @@ Temporary Items
 # PyCharm
 .idea/workspace.xml
 
+# Virtual Env
+/env/
+
 # Docs
 /docs/build/
 
