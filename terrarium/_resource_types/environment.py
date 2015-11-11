@@ -124,17 +124,6 @@ class Environment(object):
         self.parent = parent
         self.description = description
 
-    def __eq__(self, other):
-        try:
-            return all([self.name == other.name,
-                        self.parent == other.parent,
-                        self.variables == other.variables])
-        except AttributeError:
-            return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
     def expand(self, value, var_format=None, use_runtime_environment=True,
                overrides=None):
         """
@@ -317,24 +306,6 @@ class Environment(object):
                 return self._parent.get_var(name)
         return None
 
-    def __len__(self):
-        return len(self._vars)
-
-    def __getitem__(self, name):
-        value = self._get_var(name)
-        if value is None:
-            raise KeyError('Variable "{0}" not found.'.format(name))
-        return value
-
-    def __setitem__(self, name, value):
-        self._set_var(name, value)
-
-    def __delitem__(self, name):
-        del self._vars[name]
-
-    def __iter__(self):
-        return self._vars.iterkeys()
-
     def iterkeys(self):
         return self._vars.iterkeys()
 
@@ -356,5 +327,34 @@ class Environment(object):
             for name in names:
                 self._set_var(name, other[name])
 
+    def __len__(self):
+        return len(self._vars)
+
+    def __getitem__(self, name):
+        value = self._get_var(name)
+        if value is None:
+            raise KeyError('Variable "{0}" not found.'.format(name))
+        return value
+
+    def __setitem__(self, name, value):
+        self._set_var(name, value)
+
+    def __delitem__(self, name):
+        del self._vars[name]
+
+    def __iter__(self):
+        return self._vars.iterkeys()
+
     def __contains__(self, name):
         return self._get_var(name) is not None
+
+    def __eq__(self, other):
+        try:
+            return all([self.name == other.name,
+                        self.parent == other.parent,
+                        self.variables == other.variables])
+        except AttributeError:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)

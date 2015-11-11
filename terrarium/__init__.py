@@ -1,19 +1,22 @@
-""" Creates hospitable runtime environments for apps.
+"""Hospitable runtime environments for applications.
 
-.. moduleauthor:: Matt Robinson <matt@technicalartisan.com>
+Author:
+    Matt Robinson <matt@technicalartisan.com>
 
 """
 import logging
-from ._null_handler import NullHandler
 
-from .app import App
-from .environment import Environment
-from .runtime_profile import RuntimeProfile
+try:
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
 
-from .manager import Manager
-
+from ._resource_types import *
+from ._resource_managers import *
+from ._util import *
 
 _LOG = logging.getLogger(__name__)
-_LOG.addHandler(NullHandler)
+_LOG.addHandler(NullHandler())
 
-_G_MANAGER = Manager()

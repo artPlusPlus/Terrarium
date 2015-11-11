@@ -49,6 +49,9 @@ Temporary Items
 # Virtual Env
 /env/
 
+# pytest cache
+/.cache
+
 # Docs
 /docs/build/
 

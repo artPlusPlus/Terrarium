@@ -1,8 +1,9 @@
 import subprocess
 import os
 
-from .environment import Environment
-from .runtime_profile import RuntimeProfile
+from ._resource_managers import AppManager
+from ._resource_managers import EnvironmentManager
+from ._resource_managers import RuntimeProfileManager
 
 
 _FMT_CMD_SET = 'SET {0} {1}\n'.format
@@ -29,7 +30,7 @@ def apply_environment(environment, overrides=None):
         overrides = {}
 
     try:
-        env = Environment.find_environments(environment)[0]
+        env = EnvironmentManager.get_environment(environment)
     except IndexError:
         # TODO: Adding missing environment exception
         raise RuntimeError()
@@ -56,20 +57,23 @@ def build_cmd(runtime_profile):
         A string that can be used in a command shell to invoke an application.
     """
     try:
-        app = App.find_apps(self._app)[0]
-    except IndexError:
-        # TODO: Add Missing app exception
+        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
     try:
-        env = Environment.find_environments(self._environment)[0]
-    except IndexError:
-        # TODO: Add missing environment exception
+        app = AppManager.get_app(profile.app)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
+        raise RuntimeError()
+
+    try:
+        env = EnvironmentManager.get_environment(profile.environment)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
     result = [os.path.join(env.expand(app.location, app.executable))]
-    result.extend([env.expand(arg) for arg in self._args])
-    for k, v in self._kwargs.iteritems():
+    result.extend([env.expand(arg) for arg in profile.arguments])
+    for k, v in profile.keyword_arguments.iteritems():
         if k[0] != '-':
             k = '-{0}'.format(k)
         v = env.expand(v)
@@ -80,47 +84,43 @@ def build_cmd(runtime_profile):
     return result
 
 
-def run(profile):
+def execute(runtime_profile):
     """
     Runs an application using the data from the runtime profile.
 
     Args:
-        profile (string): Name of an existing RuntimeProfile
+        runtime_profile (string): Name of an existing RuntimeProfile
     """
     try:
-        profile = RuntimeProfile.find_profiles(profile)[0]
-    except IndexError:
-        # TODO: Add missing profile exception
+        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
     try:
-        env = Environment.find_environments(profile.environment)[0]
-    except IndexError:
-        # TODO: Add missing environment exception
+        env = EnvironmentManager.get_environment(profile.environment)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
-    cmd = profile.build_cmd()
+    cmd = build_cmd(runtime_profile)
     subprocess.Popen(cmd, env=env)
 
 
-def generate_bat(profile, output_path):
+def generate_bat(runtime_profile, output_path):
     """
     Creates a batch file that will setup the environment and run an application.
 
     Args:
-        profile (string): Name of an existing RuntimeProfile
+        runtime_profile (string): Name of an existing RuntimeProfile
         output_path (string): Absolute file path batch file will be written to.
     """
     try:
-        profile = RuntimeProfile.find_profiles(profile)[0]
-    except IndexError:
-        # TODO: Add missing profile exception
+        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
     try:
-        env = Environment.find_environments(profile.environment)[0]
-    except IndexError:
-        # TODO: Add missing environment exception
+        env = EnvironmentManager.get_environment(profile.environment)
+    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
         raise RuntimeError()
 
     lines = []

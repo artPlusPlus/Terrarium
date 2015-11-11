@@ -1,7 +1,6 @@
 import logging
 
-from ..runtime_profile import RuntimeProfile
-
+from .._resource_types import RuntimeProfile
 from ._resource_manager import ResourceManager
 
 
@@ -9,18 +8,25 @@ _LOG = logging.getLogger(__name__)
 
 
 class RuntimeProfileManager(ResourceManager):
-    def create_runtime_profile(self, name, app, environment, cmd_args=None, cmd_kwargs=None, description=None):
-        profile = self._create_resource(RuntimeProfile, self._resources, name, app, environment,
-                                        cmd_args=cmd_args, cmd_kwargs=cmd_kwargs, description=description)
+    _resource_type = RuntimeProfile
+    _resource_collection = {}
+
+    @classmethod
+    def create_runtime_profile(cls, name, app, environment, cmd_args=None,
+                               cmd_kwargs=None, description=None):
+        profile = cls._create_resource(name, app, environment, cmd_args=cmd_args,
+                                       cmd_kwargs=cmd_kwargs, description=description)
         return profile
 
-    def get_runtime_profile(self, name):
-        return self._get_resource(name, self._resources)
+    @classmethod
+    def get_runtime_profile(cls, name):
+        return cls._get_resource(name)
 
-    def update_runtime_profile(self, name, new_name=None, new_app=None, new_environment=None,
+    @classmethod
+    def update_runtime_profile(cls, name, new_name=None, new_app=None, new_environment=None,
                                new_cmd_args=None, new_cmd_kwargs=None, new_description=None):
         try:
-            profile = self._resources[name]
+            profile = cls._resource_collection[name]
         except KeyError:
             msg = 'Update Failed: RuntimeProfile "{0}" not found.'.format(name)
             _LOG.error(msg)
@@ -97,10 +103,12 @@ class RuntimeProfileManager(ResourceManager):
         else:
             _LOG.debug('Update Complete: RuntimeProfile "{0}"'.format(orig_name))
 
-    def delete_runtime_profile(self, name):
-        self._delete_resource(name, self._resources)
+    @classmethod
+    def delete_runtime_profile(cls, name):
+        cls._delete_resource(name)
 
-    def find_runtime_profiles(self, name_pattern=None):
+    @classmethod
+    def find_runtime_profiles(cls, name_pattern=None):
         """
         Computes a list of all RuntimeProfile instances whose name matches the name_pattern expression
 
@@ -108,6 +116,6 @@ class RuntimeProfileManager(ResourceManager):
             name_pattern (string): expression used by regex to match against App names.
         """
         attr_patterns = [('name', name_pattern)]
-        result = self._find_resources(attr_patterns, [self._resources])
+        result = cls._find_resources(attr_patterns)
 
         return result

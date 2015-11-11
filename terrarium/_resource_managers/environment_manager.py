@@ -1,7 +1,6 @@
 import logging
 
-from ..environment import Environment
-
+from .._resource_types import Environment
 from ._resource_manager import ResourceManager
 
 
@@ -9,16 +8,24 @@ _LOG = logging.getLogger(__name__)
 
 
 class EnvironmentManager(ResourceManager):
-    def create_environment(self, name, parent, description=None):
-        env = self._create_resource(Environment, self._resources, name, parent, description=description)
-        return env
+    """
+    An AppManager provides CRUD-L services for Environment data.
+    """
+    _resource_type = Environment
+    _resource_collection = {}
 
-    def get_environment(self, name):
-        return self._get_resource(name, self._resources)
+    @classmethod
+    def create_environment(cls, name, parent, description=None):
+        return cls._create_resource(name, parent, description=description)
 
-    def update_environment(self, name, new_name=None, new_parent=None, new_description=None, update_variables=None):
+    @classmethod
+    def get_environment(cls, name):
+        return cls._get_resource(name)
+
+    @classmethod
+    def update_environment(cls, name, new_name=None, new_parent=None, new_description=None, update_variables=None):
         try:
-            env = self._resources[name]
+            env = cls._resource_collection[name]
         except KeyError:
             msg = 'Update Failed: Environment "{0}" not found.'.format(name)
             _LOG.error(msg)
@@ -73,11 +80,13 @@ class EnvironmentManager(ResourceManager):
         else:
             _LOG.debug('Update Complete: Environment "{0}"'.format(orig_name))
 
-    def delete_environment(self, name):
-        self._delete_resource(name, self._resources)
+    @classmethod
+    def delete_environment(cls, name):
+        cls._delete_resource(name)
 
-    def find_environments(self, name_pattern=None):
+    @classmethod
+    def find_environments(cls, name_pattern=None):
         attr_patterns = [('name', name_pattern)]
-        result = self._find_resources(attr_patterns, [self._resources])
+        result = cls._find_resources(attr_patterns)
 
         return result
