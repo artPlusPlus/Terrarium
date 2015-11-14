@@ -75,7 +75,8 @@ class ResourceManager(object):
         try:
             for property_name, new_value in update_values.iteritems():
                 try:
-                    orig_values[property_name] = getattr(resource, property_name)
+                    orig_value = getattr(resource, property_name)
+                    orig_values[property_name] = orig_value
                 except AttributeError:
                     # TODO: Add AttributeNotFound error
                     msg = 'Update Failed: {0} "{1}.{2}" not found.'.format(resource_type_name, resource_name,
@@ -84,6 +85,7 @@ class ResourceManager(object):
                     raise
 
                 setattr(resource, property_name, new_value)
+
                 msg = 'Updated {0} "{0}.{1}": "{2}"'.format(resource_type_name, resource_name, property_name, new_value)
                 _LOG.debug(msg)
         except Exception as e:

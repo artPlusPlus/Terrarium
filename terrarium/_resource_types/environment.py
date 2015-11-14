@@ -1,6 +1,9 @@
 import os
 import re
+import logging
 
+
+_LOG = logging.getLogger(__name__)
 
 _VAR_PATTERN = re.compile(r'([%$]\{*(?P<var>\w*)[%}]?)')
 _VAR_FORMATS = ('%{0}%'.format,
@@ -57,12 +60,11 @@ class Environment(object):
 
     @parent.setter
     def parent(self, value):
-        if value:
-            value = unicode(value).strip()
-            if value:
-                self._parent = value
-            else:
-                raise ValueError('Environment parent cannot be empty.')
+        if value is None:
+            self._parent = value
+        elif value:
+            value = unicode(value).strip() or None
+            self._parent = value
         else:
             raise ValueError('Environment parent must be a non-empty string.')
 
@@ -100,6 +102,10 @@ class Environment(object):
             A dictionary with variable name keys and variable value values.
         """
         return self._vars.copy()
+
+    @variables.setter
+    def variables(self, value):
+        self.update(value)
 
     def __init__(self, name, parent=None, description=None):
         """
@@ -277,17 +283,28 @@ class Environment(object):
         Returns:
             None
         """
-        value = str(value)
+        name = unicode(name).strip()
+        value = unicode(value).strip()
+
         if not value:
-            msg = "Error setting {0}: Value cannot be empty.".format(name)
-            raise ValueError(msg)
+            try:
+                del self[name]
+            except KeyError:
+                msg = "Error setting {0}: Value cannot be empty.".format(name)
+                raise ValueError(msg)
+
         while True:
             match = _VAR_PATTERN.search(value)
             if not match:
                 break
-            value = value.replace(
-                match.group(0), _INTERNAL_VAR_FORMAT(match.group('var')))
+            value = value.replace(match.group(0), _INTERNAL_VAR_FORMAT(match.group('var')))
+
+        if name in self._vars:
+            msg = 'Updated Environment "{0}": MOD variable "{1}"'.format(self.name, name)
+        else:
+            msg = 'Updated Environment "{0}": ADD variable "{1}"'.format(self.name, name)
         self._vars[name] = os.path.normpath(value)
+        _LOG.debug(msg)
 
     def _get_var(self, name):
         """
@@ -299,12 +316,12 @@ class Environment(object):
         Returns:
             A string if a setting exists with the given name; otherwise, None.
         """
+        name = unicode(name).strip()
+
         try:
             return self._vars[name]
         except KeyError:
-            if self._parent:
-                return self._parent.get_var(name)
-        return None
+            return None
 
     def iterkeys(self):
         return self._vars.iterkeys()
@@ -327,6 +344,9 @@ class Environment(object):
             for name in names:
                 self._set_var(name, other[name])
 
+    def __nonzero__(self):
+        return True
+
     def __len__(self):
         return len(self._vars)
 
@@ -340,7 +360,9 @@ class Environment(object):
         self._set_var(name, value)
 
     def __delitem__(self, name):
+        msg = 'Updated Environment "{0}": DEL variable "{1}"'.format(self.name, name)
         del self._vars[name]
+        _LOG.debug(msg)
 
     def __iter__(self):
         return self._vars.iterkeys()

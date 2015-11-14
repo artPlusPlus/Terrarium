@@ -44,7 +44,7 @@ class AppManager(ResourceManager):
         return cls._get_resource(name)
 
     @classmethod
-    def update_app(cls, name, new_name=None, new_location=None, new_executable=None, new_description=None):
+    def update_app(cls, name, new_name=None, new_description=None, new_location=None, new_executable=None):
         """
         Update an existing class::`App`.
 
@@ -53,58 +53,20 @@ class AppManager(ResourceManager):
         Args:
             name (basestring): Name of an existing App.
             new_name (basestring): New name for the App.
+            new_description (basestring): New description for the App.
             new_location (basestring): New path to the directory containing the executable.
             new_executable (basestring): New filename of the executable.
-            new_description (basestring): New description for the App.
         """
-        try:
-            app = cls._resource_collection[name]
-        except KeyError:
-            msg = 'Update Failed: App "{0}" not found.'.format(name)
-            _LOG.error(msg)
-            # TODO: Add UpdateFailed error
-            raise
-
-        _LOG.debug('Update Started: App "{0}"'.format(name))
-
-        orig_name = app.name
-        orig_location = app.location
-        orig_executable = app.executable
-        orig_description = app.description
-
-        try:
-            if new_name:
-                msg = 'Updated App "{0}": name "{1}"'.format(app.name, new_name)
-                app.name = new_name
-                _LOG.debug(msg)
-
-            if new_location:
-                msg = 'Updated App "{0}": location "{1}"'.format(app.name, new_location)
-                app.location = new_location
-                _LOG.debug(msg)
-
-            if new_executable:
-                msg = 'Updated App "{0}": executable "{1}"'.format(app.name, new_executable)
-                app.executable = new_executable
-                _LOG.debug(msg)
-
-            if new_description:
-                msg = 'Updated App "{0}": description'.format(app.name, new_description)
-                app.description = new_description
-                _LOG.debug(msg)
-        except Exception as e:
-            app.name = orig_name
-            app.location = orig_location
-            app.executable = orig_executable
-            app.description = orig_description
-
-            msg = 'Update Failed: App "{0}" - {1}'.format(orig_name, e)
-            _LOG.error(msg)
-
-            # TODO: Add UpdateFailed error
-            raise
-        else:
-            _LOG.debug('Update Complete: App "{0}"'.format(name))
+        update_kwargs = {}
+        if new_name is not None:
+            update_kwargs['name'] = new_name
+        if new_description is not None:
+            update_kwargs['description'] = new_description
+        if new_location is not None:
+            update_kwargs['location'] = new_location
+        if new_executable is not None:
+            update_kwargs['executable'] = new_executable
+        super(AppManager, cls)._update_resource(name, **update_kwargs)
 
     @classmethod
     def delete_app(cls, name):

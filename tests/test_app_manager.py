@@ -11,11 +11,11 @@ _LOG = logging.getLogger(__name__)
 @pytest.fixture
 def _app(request):
     _LOG.debug('create _app')
+
     app = terrarium.AppManager.create_app('Test', '%ROOT%', 'Test.exe',
                                           description='This is a Test App!')
     def fin():
-        _app_name = getattr(app, 'name')
-        terrarium.AppManager.delete_app(_app_name)
+        terrarium.AppManager.delete_app(app.name)
         _LOG.debug('teardown _app')
     request.addfinalizer(fin)
 

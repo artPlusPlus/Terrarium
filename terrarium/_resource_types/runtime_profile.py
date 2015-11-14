@@ -1,4 +1,8 @@
 import shlex
+import logging
+
+
+_LOG = logging.getLogger(__name__)
 
 
 class RuntimeProfile(object):
@@ -59,9 +63,7 @@ class RuntimeProfile(object):
 
     @arguments.setter
     def arguments(self, value):
-        value = shlex.split(value)
-        value = [unicode(v).strip() for v in value]
-        self._args = value
+        self._update_args(value)
 
     @property
     def keyword_arguments(self):
@@ -69,12 +71,7 @@ class RuntimeProfile(object):
 
     @keyword_arguments.setter
     def keyword_arguments(self, value):
-        _value = {}
-        for keyword, arg in value:
-            keyword = unicode(keyword).strip()
-            arg = unicode(arg).strip()
-            _value[keyword] = arg
-        self._kwargs = _value
+        self._update_kwargs(value)
 
     @property
     def description(self):
@@ -105,13 +102,68 @@ class RuntimeProfile(object):
         self._name = name
         self._app = app
         self._environment = environment
-        self._args = cmd_args or []
-        self._kwargs = cmd_kwargs or {}
+        self._args = []
+        self._kwargs = {}
         self._description = description
+
+        self._update_args(cmd_args)
+        self._update_kwargs(cmd_kwargs)
+
+    def _update_args(self, args):
+        if isinstance(args, basestring):
+            args = shlex.split(args)
+        args = [unicode(v).strip() for v in args]
+
+        added_args = set(args).difference(self._args)
+        dropped_args = set(self._args).difference(args)
+
+        self._args.extend(added_args)
+        for arg in added_args:
+            msg = 'Updated {0} "{1}": ADD arg "{2}"'.format(self.__class__.__name__, self.name, arg)
+            _LOG.debug(msg)
+
+        self._args = [a for a in self._args if a not in dropped_args]
+        for arg in dropped_args:
+            msg = 'Updated {0} "{1}": REM arg "{2}"'.format(self.__class__.__name__, self.name, arg)
+            _LOG.debug(msg)
+
+    def _update_kwargs(self, kwargs):
+        if isinstance(kwargs, basestring):
+            kwargs = shlex.split(kwargs)
+
+        _kwargs = {}
+        try:
+            _kwargs.update(kwargs)
+        except AttributeError:
+            for kw, arg in kwargs:
+                _kwargs[kw] = arg
+
+        added_args = [unicode(kw).strip() for kw in set(_kwargs.keys()).difference(self._kwargs.keys())]
+        modded_args = [unicode(kw).strip() for kw in set(self._kwargs.keys()).intersection(_kwargs.keys())]
+        dropped_args = [unicode(kw).strip() for kw in set(self._kwargs.keys()).difference(_kwargs.keys())]
+        dropped_args.extend(kw for kw, val in _kwargs.iteritems() if not val or not unicode(val).strip())
+
+        for kw, arg in zip(added_args, [unicode(kwargs[kw]).strip() for kw in added_args]):
+            self._kwargs[kw] = arg
+            msg = 'Updated {0} "{1}": ADD kwarg "{2}" - "{3}"'.format(self.__class__.__name__, self.name, kw, arg)
+            _LOG.debug(msg)
+
+        for kw, arg in zip(modded_args, [unicode(kwargs[kw]).strip() for kw in modded_args]):
+            if self._kwargs[kw] == arg:
+                continue
+            self._kwargs[kw] = arg
+            msg = 'Updated {0} "{1}": MOD kwarg "{2}" - "{3}"'.format(self.__class__.__name__, self.name, kw, arg)
+            _LOG.debug(msg)
+
+        for kw in dropped_args:
+            del self._kwargs[kw]
+            msg = 'Updated {0} "{0}": REM kwarg "{2}"'.format(self.__class__.__name__, self.name, kw)
+            _LOG.debug(msg)
 
     def __eq__(self, other):
         try:
-            return all([self.app == other.app,
+            return all([self.name == other.name,
+                        self.app == other.app,
                         self.environment == other.environment,
                         self.arguments == other.arguments])
         except AttributeError:
