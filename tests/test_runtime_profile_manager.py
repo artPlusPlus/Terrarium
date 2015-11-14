@@ -37,7 +37,7 @@ def test_profile_deletion(_profile):
     terrarium.RuntimeProfileManager.delete_runtime_profile('Test')
     gc.collect()
 
-    with pytest.raises(KeyError):
+    with pytest.raises(terrarium.ResourceNotFoundError):
         terrarium.RuntimeProfileManager.get_runtime_profile('Test')
 
 

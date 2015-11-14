@@ -1,10 +1,13 @@
 import subprocess
 import os
+import logging
 
 from ._resource_managers import AppManager
 from ._resource_managers import EnvironmentManager
 from ._resource_managers import RuntimeProfileManager
+from ._errors import *
 
+_LOG = logging.getLogger(__name__)
 
 _FMT_CMD_SET = 'SET {0} {1}\n'.format
 _FMT_CMD_RUN = 'RUN {0}\n'.format
@@ -12,8 +15,9 @@ _FMT_CMD_RUN = 'RUN {0}\n'.format
 
 def apply_environment(environment, overrides=None):
     """
-    Pushes the Environment instance's variable data into the current
-        runtime environment
+    Pushes the Environment instance's variable data into the current runtime environment.
+
+    If a failure occurs while applying a value, any previous value changes will be reverted.
 
     Args:
         environment (string): Name of an existing Environment
@@ -31,9 +35,12 @@ def apply_environment(environment, overrides=None):
 
     try:
         env = EnvironmentManager.get_environment(environment)
-    except IndexError:
-        # TODO: Adding missing environment exception
-        raise RuntimeError()
+    except KeyError:
+        msg = 'Failed to apply environment: Environment "{0}" not found'.format(environment)
+        _LOG.error(msg)
+        raise ResourceNotFoundError(msg)
+
+    original_env = {}
 
     for name, value in env.iteritems():
         try:
@@ -43,7 +50,25 @@ def apply_environment(environment, overrides=None):
         else:
             value = env.expand(value)
 
-        os.environ[name] = value
+        try:
+            original_env[name] = os.environ[name]
+        except KeyError:
+            original_env[name] = None
+
+        try:
+            os.environ[name] = value
+        except Exception as e:
+            msg = 'Failed to apply Environment value "{0}.{1}" - "{2}": {3}'
+            msg = msg.format(environment, name, value, e)
+            _LOG.error(msg)
+
+            for orig_name, orig_value in original_env.iteritems():
+                if orig_value is None:
+                    del os.environ[orig_name]
+                else:
+                    os.environ[orig_name] = orig_value
+
+            raise RuntimeError(msg)
 
 
 def build_cmd(runtime_profile):
@@ -56,20 +81,9 @@ def build_cmd(runtime_profile):
     Returns:
         A string that can be used in a command shell to invoke an application.
     """
-    try:
-        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
-
-    try:
-        app = AppManager.get_app(profile.app)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
-
-    try:
-        env = EnvironmentManager.get_environment(profile.environment)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
+    profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    app = AppManager.get_app(profile.app)
+    env = EnvironmentManager.get_environment(profile.environment)
 
     result = [os.path.join(env.expand(app.location, app.executable))]
     result.extend([env.expand(arg) for arg in profile.arguments])
@@ -91,15 +105,8 @@ def execute(runtime_profile):
     Args:
         runtime_profile (string): Name of an existing RuntimeProfile
     """
-    try:
-        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
-
-    try:
-        env = EnvironmentManager.get_environment(profile.environment)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
+    profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    env = EnvironmentManager.get_environment(profile.environment)
 
     cmd = build_cmd(runtime_profile)
     subprocess.Popen(cmd, env=env)
@@ -113,15 +120,8 @@ def generate_bat(runtime_profile, output_path):
         runtime_profile (string): Name of an existing RuntimeProfile
         output_path (string): Absolute file path batch file will be written to.
     """
-    try:
-        profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
-
-    try:
-        env = EnvironmentManager.get_environment(profile.environment)
-    except KeyError as e:  # TODO: Implement ResourceNotFound Handler
-        raise RuntimeError()
+    profile = RuntimeProfileManager.get_runtime_profile(runtime_profile)
+    env = EnvironmentManager.get_environment(profile.environment)
 
     lines = []
 

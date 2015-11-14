@@ -16,6 +16,7 @@ except ImportError:
 from ._resource_types import *
 from ._resource_managers import *
 from ._util import *
+from ._errors import *
 
 _LOG = logging.getLogger(__name__)
 _LOG.addHandler(NullHandler())

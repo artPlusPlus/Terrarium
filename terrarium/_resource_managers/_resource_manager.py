@@ -2,6 +2,9 @@ import logging
 import operator
 import re
 
+from .._errors import *
+
+
 _LOG = logging.getLogger(__name__)
 
 
@@ -25,8 +28,7 @@ class ResourceManager(object):
         if name in cls._resource_collection:
             msg = 'Creation Failed: {0} "{1}" already exists.'.format(resource_type_name, name)
             _LOG.error(msg)
-            # TODO: Add ResourceAlreadyExists error
-            raise RuntimeError()
+            raise ResourceAlreadyExistsError(msg)
         else:
             _LOG.debug('Creation Started: New {0}'.format(resource_type_name))
 
@@ -35,8 +37,7 @@ class ResourceManager(object):
         except ValueError as e:
             msg = 'Creation Failed: {0}'.format(e)
             _LOG.error(msg)
-            # TODO: Add ResourceCreationFailed error
-            raise
+            raise ResourceCreationError(msg)
         else:
             cls._resource_collection[name] = resource
 
@@ -50,9 +51,9 @@ class ResourceManager(object):
         try:
             result = cls._resource_collection[resource_name]
         except KeyError:
-            _LOG.error('Retrieval Failed: {0} "{1}" not found.'.format(resource_type_name, resource_name))
-            # TODO: Add ResourceNotFound error
-            raise
+            msg = 'Retrieval Failed: {0} "{1}" not found.'.format(resource_type_name, resource_name)
+            _LOG.error(msg)
+            raise ResourceNotFoundError(msg)
         else:
             _LOG.debug('Retrieval Complete: {0} "{1}"'.format(resource_type_name, resource_name))
 
@@ -65,9 +66,9 @@ class ResourceManager(object):
         try:
             resource = cls._resource_collection[resource_name]
         except KeyError:
-            _LOG.error('Update Failed: {0} "{1}" not found.'.format(resource_type_name, resource_name))
-            # TODO: Add ResourceNotFound error
-            raise
+            msg = 'Update Failed: {0} "{1}" not found.'.format(resource_type_name, resource_name)
+            _LOG.error(msg)
+            raise ResourceNotFoundError(msg)
 
         _LOG.debug('Update Started: {0} "{1}"'.format(resource_type_name, resource_name))
 
@@ -78,27 +79,28 @@ class ResourceManager(object):
                     orig_value = getattr(resource, property_name)
                     orig_values[property_name] = orig_value
                 except AttributeError:
-                    # TODO: Add AttributeNotFound error
                     msg = 'Update Failed: {0} "{1}.{2}" not found.'.format(resource_type_name, resource_name,
                                                                            property_name)
                     _LOG.error(msg)
-                    raise
+                    raise ResourceAttributeNotFoundError(msg)
 
                 setattr(resource, property_name, new_value)
 
                 msg = 'Updated {0} "{0}.{1}": "{2}"'.format(resource_type_name, resource_name, property_name, new_value)
                 _LOG.debug(msg)
         except Exception as e:
-            # TODO: Add UpdateFailed error
-            msg = 'Update Failed: {0} "{1}" - {2}'.format(resource_type_name, resource_name, e)
-            _LOG.error(msg)
-
             for property_name, orig_value in orig_values.iteritems():
                 setattr(resource, property_name, orig_value)
                 msg = 'Reverted {0} "{0}.{1}": "{2}"'.format(resource_type_name, resource_name, property_name,
                                                              orig_value)
                 _LOG.debug(msg)
-            raise
+
+            if isinstance(e, ResourceAttributeNotFoundError):
+                raise
+
+            msg = 'Update Failed: {0} "{1}" - {2}'.format(resource_type_name, resource_name, e)
+            _LOG.error(msg)
+            raise ResourceUpdateError(msg)
 
         if resource.name != resource_name:
             del cls._resource_collection[resource_name]

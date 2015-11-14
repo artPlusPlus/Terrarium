@@ -34,7 +34,7 @@ def test_app_deletion(_app):
     terrarium.AppManager.delete_app('Test')
     gc.collect()
 
-    with pytest.raises(KeyError):
+    with pytest.raises(terrarium.ResourceNotFoundError):
         terrarium.AppManager.get_app('Test')
 
 

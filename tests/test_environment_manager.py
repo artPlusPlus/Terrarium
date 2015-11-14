@@ -33,7 +33,7 @@ def test_env_deletion(_environment):
     terrarium.EnvironmentManager.delete_environment('Test')
     gc.collect()
 
-    with pytest.raises(KeyError):
+    with pytest.raises(terrarium.ResourceNotFoundError):
         terrarium.EnvironmentManager.get_environment('Test')
 
 
