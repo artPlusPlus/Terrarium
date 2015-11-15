@@ -15,8 +15,8 @@ class EnvironmentManager(ResourceManager):
     _resource_collection = {}
 
     @classmethod
-    def create_environment(cls, name, parent, variables=None, description=None):
-        return cls._create_resource(name, parent, variables=variables, description=description)
+    def create_environment(cls, name, parent=None, variables=None, description=None):
+        return cls._create_resource(name, parent=parent, variables=variables, description=description)
 
     @classmethod
     def get_environment(cls, name):

@@ -1,10 +1,10 @@
 import logging
 import json
 
-from ._resource_managers import AppManager
-from ._resource_managers import EnvironmentManager
-from ._resource_managers import RuntimeProfileManager
-from ._errors import ResourceNotFoundError, ResourceAlreadyExistsError
+from .._resource_managers import AppManager
+from .._resource_managers import EnvironmentManager
+from .._resource_managers import RuntimeProfileManager
+from .._errors import ResourceNotFoundError, ResourceAlreadyExistsError
 
 
 _LOG = logging.getLogger(__name__)
@@ -14,7 +14,7 @@ _FMT_BASE_NULL_DATA = 'Failed to load {0} data: No "{{0}}" field found.'.format
 _FMT_BASE_EMPTY_DATA = 'Failed to load {0} data: No "{{0}}" field found.'.format
 
 
-def import_app_from_json(app_data, force=False):
+def import_app(app_data, force=False):
     """
     Creates a managed class::`App` instance from JSON data.
 
@@ -56,14 +56,15 @@ def import_app_from_json(app_data, force=False):
                                   new_description=app_description)
             result = AppManager.get_app(app_name)
         else:
-            _LOG.debug('Import Failed: App "{0}" already exists'.format(app_name))
-            result = None
+            msg = 'Import Failed: App "{0}" already exists'.format(app_name)
+            _LOG.error(msg)
+            raise ResourceAlreadyExistsError(msg)
 
     _LOG.debug('Import Complete: App from JSON')
     return result
 
 
-def export_app_to_json(app_name):
+def export_app(app_name):
     """
     Exports an class::`App` instance to a JSON string.
 
@@ -91,7 +92,7 @@ def export_app_to_json(app_name):
     return json.dumps(app_data)
 
 
-def import_environment_from_json(environment_data, force=False):
+def import_environment(environment_data, force=False):
     """
     Creates a managed class::`Environment` instance from JSON data.
 
@@ -103,6 +104,11 @@ def import_environment_from_json(environment_data, force=False):
         An class::`Environment` instance or None
     """
     _LOG.debug('Import Started: Environment from JSON')
+
+    try:
+        environment_data = json.loads(environment_data)
+    except TypeError:
+        pass
 
     fmt_missing_field = _FMT_BASE_MISSING_FIELD('Environment').format
     fmt_null_data = _FMT_BASE_NULL_DATA('Environment').format
@@ -120,7 +126,7 @@ def import_environment_from_json(environment_data, force=False):
     env_description = get_data_field('description')
 
     try:
-        result = EnvironmentManager.create_environment(env_name, env_parent, variables=env_variables,
+        result = EnvironmentManager.create_environment(env_name, parent=env_parent, variables=env_variables,
                                                        description=env_description)
     except ResourceAlreadyExistsError:
         if force:
@@ -129,14 +135,15 @@ def import_environment_from_json(environment_data, force=False):
                                                   new_description=env_description)
             result = EnvironmentManager.get_environment(env_name)
         else:
-            _LOG.debug('Import Failed: Environment "{0}" already exists'.format(env_name))
-            result = None
+            msg = 'Import Failed: Environment "{0}" already exists'.format(env_name)
+            _LOG.error(msg)
+            raise ResourceAlreadyExistsError(msg)
 
     _LOG.debug('Import Complete: Environment from JSON')
     return result
 
 
-def export_environment_to_json(environment_name):
+def export_environment(environment_name):
     """
     Exports an class::`Environment` instance to a JSON string.
 
@@ -164,7 +171,7 @@ def export_environment_to_json(environment_name):
     return json.dumps(env_data)
 
 
-def import_runtime_profile_from_json(runtime_profile_data, force=False):
+def import_runtime_profile(runtime_profile_data, force=False):
     """
     Creates a managed class::`RuntimeProfile` instance from JSON data.
 
@@ -176,6 +183,11 @@ def import_runtime_profile_from_json(runtime_profile_data, force=False):
         A class::`RuntimeProfile` instance or None
     """
     _LOG.debug('Import Started: Runtime Profile from JSON')
+
+    try:
+        runtime_profile_data = json.loads(runtime_profile_data)
+    except TypeError:
+        pass
 
     fmt_missing_field = _FMT_BASE_MISSING_FIELD('RuntimeProfile').format
     fmt_null_data = _FMT_BASE_NULL_DATA('RuntimeProfile').format
@@ -206,14 +218,15 @@ def import_runtime_profile_from_json(runtime_profile_data, force=False):
                 new_cmd_kwargs=profile_kwargs, new_description=profile_description)
             result = RuntimeProfileManager.get_runtime_profile(profile_name)
         else:
-            _LOG.debug('Import Failed: Runtime Profile "{0}" already exists'.format(profile_name))
-            result = None
+            msg = 'Import Failed: Runtime Profile "{0}" already exists'.format(profile_name)
+            _LOG.error(msg)
+            raise ResourceAlreadyExistsError(msg)
 
     _LOG.debug('Import Complete: Runtime Profile from JSON')
     return result
 
 
-def export_runtime_profile_to_json(runtime_profile_name):
+def export_runtime_profile(runtime_profile_name):
     """
     Exports a class::`RuntimeProfile` instance to a JSON string.
 
@@ -258,7 +271,8 @@ def _get_data_field(data, field_name, fmt_missing_field=None, fmt_null_data=None
         _LOG.error(msg)
         return result
 
-    result = unicode(result).strip()
+    if isinstance(result, basestring):
+        result = unicode(result).strip()
     if not result:
         msg = fmt_empty_data(field_name)
         _LOG.error(msg)

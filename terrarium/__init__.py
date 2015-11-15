@@ -17,6 +17,7 @@ from ._resource_types import *
 from ._resource_managers import *
 from ._util import *
 from ._errors import *
+from ._resource_io import json
 
 _LOG = logging.getLogger(__name__)
 _LOG.addHandler(NullHandler())

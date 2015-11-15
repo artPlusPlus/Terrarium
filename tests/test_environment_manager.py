@@ -12,11 +12,11 @@ _LOG = logging.getLogger(__name__)
 def _environment(request):
     _LOG.debug('create _environment')
 
-    env = terrarium.EnvironmentManager.create_environment('Test', None,
-                                                          description='This is a Test App!')
+    env = terrarium.EnvironmentManager.create_environment('Test', parent=None,
+                                                          description='This is a Test Environment.')
     def fin():
         terrarium.EnvironmentManager.delete_environment(env.name)
-        _LOG.debug('teardown _env')
+        _LOG.debug('teardown _environment')
     request.addfinalizer(fin)
 
     return env
@@ -26,7 +26,7 @@ def test_env_creation(_environment):
     assert _environment
     assert _environment.name == 'Test'
     assert _environment.parent is None
-    assert _environment.description == 'This is a Test App!'
+    assert _environment.description == 'This is a Test Environment.'
 
 
 def test_env_deletion(_environment):
@@ -62,9 +62,9 @@ def test_env_update_parent(_environment):
 
 
 def test_env_update_description(_environment):
-    terrarium.EnvironmentManager.update_environment('Test', new_description='This is a Pass Env!')
+    terrarium.EnvironmentManager.update_environment('Test', new_description='This is a Pass Environment.')
 
-    assert _environment.description == 'This is a Pass Env!'
+    assert _environment.description == 'This is a Pass Environment.'
 
 
 if __name__ == '__main__':
