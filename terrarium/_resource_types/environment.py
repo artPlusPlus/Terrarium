@@ -107,7 +107,7 @@ class Environment(object):
     def variables(self, value):
         self.update(value)
 
-    def __init__(self, name, parent=None, description=None):
+    def __init__(self, name, parent=None, variables=None, description=None):
         """
         Instantiates a new Environment instance.
 
@@ -129,6 +129,8 @@ class Environment(object):
         self.name = name
         self.parent = parent
         self.description = description
+        if variables:
+            self.variables = variables
 
     def expand(self, value, var_format=None, use_runtime_environment=True,
                overrides=None):

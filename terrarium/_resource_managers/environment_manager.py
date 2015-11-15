@@ -9,14 +9,14 @@ _LOG = logging.getLogger(__name__)
 
 class EnvironmentManager(ResourceManager):
     """
-    An AppManager provides CRUD-L services for Environment data.
+    EnvironmentManager provides CRUD-L services for Environment data.
     """
     _resource_type = Environment
     _resource_collection = {}
 
     @classmethod
-    def create_environment(cls, name, parent, description=None):
-        return cls._create_resource(name, parent, description=description)
+    def create_environment(cls, name, parent, variables=None, description=None):
+        return cls._create_resource(name, parent, variables=variables, description=description)
 
     @classmethod
     def get_environment(cls, name):
