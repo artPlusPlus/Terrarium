@@ -46,6 +46,12 @@ Temporary Items
 # PyCharm
 .idea/workspace.xml
 
+# Virtual Env
+/env/
+
+# pytest cache
+/.cache
+
 # Docs
 /docs/build/
 
