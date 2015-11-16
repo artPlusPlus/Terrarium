@@ -9,7 +9,7 @@ _LOG = logging.getLogger(__name__)
 
 class AppManager(ResourceManager):
     """
-    AppManager provides CRUD-L services for App data.
+    class::`AppManager` provides CRUD-L services for class::`App` data.
     """
     _resource_type = App
     _resource_collection = {}
@@ -18,6 +18,8 @@ class AppManager(ResourceManager):
     def create_app(cls, name, location, executable, description=None):
         """
         Attempts to create a new App instance.
+
+        Any Apps created through the AppManager are managed by the AppManager.
 
         Args:
             name (basestring): The name of the App. This must be unique among App instances.
@@ -71,20 +73,20 @@ class AppManager(ResourceManager):
     @classmethod
     def delete_app(cls, name):
         """
-        Remove all data about an App
+        Remove all data describing an class::`App`
 
         Args:
-            name (basestring): Name of an existing App.
+            name (basestring): Name of an existing class::`App`.
         """
         cls._delete_resource(name)
 
     @classmethod
     def find_apps(cls, name_pattern=None):
         """
-        Computes a list of all managed App instances whose name matches the name_pattern expression
+        Computes a list of all managed class::`App` instances matching various criteria.
 
         Args:
-            name_pattern (basestring): expression used by regex to match against App names.
+            name_pattern (basestring): Used to regex match App names.
 
         Returns:
             List[class::`App`]
