@@ -14,7 +14,7 @@ def test_import_app():
                 'executable': 'Test.exe',
                 'description': 'I am a test App.'}
     app_data = json.dumps(app_data)
-    app = terrarium.json.import_app(app_data)
+    app = terrarium.json_io.import_app(app_data)
 
     assert isinstance(app, terrarium.App)
     assert app == terrarium.AppManager.get_app('TestApp')
@@ -30,9 +30,9 @@ def test_import_app_force():
     app_data = json.dumps(app_data)
 
     with pytest.raises(terrarium.ResourceAlreadyExistsError):
-        terrarium.json.import_app(app_data)
+        terrarium.json_io.import_app(app_data)
 
-    updated_app = terrarium.json.import_app(app_data, force=True)
+    updated_app = terrarium.json_io.import_app(app_data, force=True)
 
     assert isinstance(updated_app, terrarium.App)
     assert updated_app is orig_app
@@ -46,7 +46,7 @@ def test_export_app():
                 'executable': 'Pass.exe',
                 'description': 'I am a test App.'}
 
-    exported_data = terrarium.json.export_app('TestApp')
+    exported_data = terrarium.json_io.export_app('TestApp')
     assert app_data == json.loads(exported_data)
 
 
@@ -56,7 +56,7 @@ def test_import_environment():
                 'variables': {'foo': 'bar'},
                 'description': 'I am a test Env.'}
     env_data = json.dumps(env_data)
-    env = terrarium.json.import_environment(env_data)
+    env = terrarium.json_io.import_environment(env_data)
 
     assert isinstance(env, terrarium.Environment)
     assert env == terrarium.EnvironmentManager.get_environment('TestEnv')
@@ -72,9 +72,9 @@ def test_import_environment_force():
     env_data = json.dumps(env_data)
 
     with pytest.raises(terrarium.ResourceAlreadyExistsError):
-        terrarium.json.import_environment(env_data)
+        terrarium.json_io.import_environment(env_data)
 
-    updated_env = terrarium.json.import_environment(env_data, force=True)
+    updated_env = terrarium.json_io.import_environment(env_data, force=True)
 
     assert isinstance(updated_env, terrarium.Environment)
     assert updated_env is orig_env
@@ -90,7 +90,7 @@ def test_import_runtime_profile():
                     'keyword_arguments': {'Boz': 'Baz'},
                     'description': 'I am a test Runtime Profile.'}
     profile_data = json.dumps(profile_data)
-    profile = terrarium.json.import_runtime_profile(profile_data)
+    profile = terrarium.json_io.import_runtime_profile(profile_data)
 
     assert isinstance(profile, terrarium.RuntimeProfile)
     assert profile == terrarium.RuntimeProfileManager.get_runtime_profile('TestProfile')
@@ -108,10 +108,10 @@ def test_import_runtime_profile_force():
     profile_data = json.dumps(profile_data)
 
     with pytest.raises(terrarium.ResourceAlreadyExistsError):
-        terrarium.json.import_runtime_profile(profile_data)
+        terrarium.json_io.import_runtime_profile(profile_data)
 
-    updated_profile = terrarium.json.import_runtime_profile(profile_data,
-                                                            force=True)
+    updated_profile = terrarium.json_io.import_runtime_profile(profile_data,
+                                                               force=True)
 
     assert isinstance(updated_profile, terrarium.RuntimeProfile)
     assert updated_profile is orig_profile

@@ -16,12 +16,12 @@ class RuntimeProfile(object):
     @property
     def name(self):
         """
-        The name of the class::`RuntimeProfile`.
+        The name of the :class:`RuntimeProfile`.
 
         Meant to be User/UI friendly.
 
         Returns:
-            The name of the class::`RuntimeProfile` as a string.
+            The name of the :class:`RuntimeProfile` as a string.
         """
         return self._name
 
@@ -43,14 +43,14 @@ class RuntimeProfile(object):
     @property
     def app(self):
         """
-        The name of an class::`App`.
+        The name of an :class:`App`.
 
-        The class::`App` will be invoked with the ``arguments`` and
+        The :class:`App` will be invoked with the ``arguments`` and
         ``keyword_arguments`` and have access to environment variables
-        described in the class::`Environment`.
+        described in the :class:`Environment`.
 
         Returns:
-            The name of the class::`App` as a string.
+            The name of the :class:`App` as a string.
         """
         return self._app
 
@@ -72,13 +72,13 @@ class RuntimeProfile(object):
     @property
     def environment(self):
         """
-        The name of an class::`Environment`.
+        The name of an :class:`Environment`.
 
-        The class::`Environment` describes the environment variable names and
-        values to which the class::`App` will have access to at runtime.
+        The :class:`Environment` describes the environment variable names and
+        values to which the :class:`App` will have access to at runtime.
 
         Returns:
-            The name of the class::`Environment` as a string.
+            The name of the :class:`Environment` as a string.
         """
         return self._environment
 
@@ -100,7 +100,7 @@ class RuntimeProfile(object):
     @property
     def arguments(self):
         """
-        Argumentation to be passed to the class::`App`.
+        Argumentation to be passed to the :class:`App`.
 
         Returns:
             A list of strings.
@@ -115,7 +115,7 @@ class RuntimeProfile(object):
     @property
     def keyword_arguments(self):
         """
-        Keyword Argumentation to be passed to the class::`App`.
+        Keyword Argumentation to be passed to the :class:`App`.
 
         Returns:
             A dictionary of string keys and string values.
@@ -130,10 +130,10 @@ class RuntimeProfile(object):
     @property
     def description(self):
         """
-        Description of the class::`RuntimeProfile`.
+        Description of the :class:`RuntimeProfile`.
 
         The description should provide a high-level understanding of how the
-        class::`App`, class::`Environment`, and argumentation interact at
+        :class:`App`, :class:`Environment`, and argumentation interact at
         runtime.
 
         Returns:

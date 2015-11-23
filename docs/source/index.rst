@@ -1,22 +1,33 @@
-.. Terrarium documentation master file, created by
-   sphinx-quickstart on Sat Oct 11 11:32:47 2014.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Welcome to Terrarium
+====================
 
-Welcome to Terrarium's documentation!
-=====================================
+Terrarium is a library for managing application runtime environments.
 
-Contents:
+
+User's Guide
+------------
+
+This section will walk through the different parts of Terrarium and how
+they all work together.
 
 .. toctree::
    :maxdepth: 2
 
-   modules
+   guide
 
-Indices and tables
-==================
+API Reference
+-------------
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :maxdepth: 2
+
+   api
+
+Additional Information
+----------------------
+
+.. toctree::
+   :maxdepth: 2
+
+   license
 

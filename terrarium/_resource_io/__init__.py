@@ -1,1 +1,1 @@
-import _json as json
+import json_io

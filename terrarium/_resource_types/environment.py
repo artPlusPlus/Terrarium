@@ -154,8 +154,7 @@ class Environment(object):
 
         Args:
             value (basestring): A string containing environment variables.
-            var_format (basestring): String format expression used to generate
-                a variables final output form.
+            var_format (basestring): String format expression used to generate a variables final output form.
                 Example: '%{0}%'
             use_runtime_environment (bool): If true, once the Environment
                 instance has resolved all the variables it can, the runtime
@@ -225,8 +224,7 @@ class Environment(object):
 
         Args:
             value (basestring): Object to condense
-            var_format (basestring): String format expression used to generate
-                a variables final output form.
+            var_format (basestring): String format expression used to generate a variables final output form.
                 Example: '%{0}%'
             use_runtime_environment (bool): If true, once the Environment
                 instance has resolved all the variables it can, the runtime

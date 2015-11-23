@@ -21,14 +21,14 @@ _FMT_BASE_EMPTY_DATA = _FMT_BASE_EMPTY_DATA.format
 
 def import_app(app_data, force=False):
     """
-    Creates a managed class::`App` instance from JSON data.
+    Creates a managed :class:`terrarium.App` instance from JSON data.
 
     Args:
-        app_data (str): JSON string with class::`App` data
-        force: If True and an existing app is found, it will be updated
+        app_data (basestring): JSON string with :class:`terrarium.App` data
+        force (bool): If True and an existing app is found, it will be updated
 
     Returns:
-        An class::`App` instance or None
+        An :class:`terrarium.App` instance or None
     """
     _LOG.debug('Import Started: App from JSON')
 
@@ -74,13 +74,14 @@ def import_app(app_data, force=False):
 
 def export_app(app_name):
     """
-    Exports an class::`App` instance to a JSON string.
+    Exports an :class:`terrarium.App` instance to a JSON string.
 
     Args:
-        app_name (str): The name of an existing, managed class::`App` instance.
+        app_name (basestring): The name of an existing, managed
+        :class:`terrarium.App` instance.
 
     Returns:
-        JSON string containing class::`App` data
+        JSON string containing :class:`terrarium.App` data
     """
     _LOG.debug('Export Started: App "{0}" to JSON'.format(app_name))
 
@@ -102,14 +103,15 @@ def export_app(app_name):
 
 def import_environment(environment_data, force=False):
     """
-    Creates a managed class::`Environment` instance from JSON data.
+    Creates a managed :class:`terrarium.Environment` instance from JSON data.
 
     Args:
-        environment_data (str): JSON string with class::`Environment` data
-        force: If True and an existing environment is found, it will be updated.
+        environment_data (basestring): JSON string with
+        :class:`terrarium.Environment` data force (bool): If True and an
+        existing environment is found, it will be updated.
 
     Returns:
-        An class::`Environment` instance or None
+        An :class:`Environment` instance or None
     """
     _LOG.debug('Import Started: Environment from JSON')
 
@@ -156,14 +158,14 @@ def import_environment(environment_data, force=False):
 
 def export_environment(environment_name):
     """
-    Exports an class::`Environment` instance to a JSON string.
+    Exports an :class:`terrarium.Environment` instance to a JSON string.
 
     Args:
-        environment_name (str): The name of an existing, managed
-            class::`Environment` instance.
+        environment_name (basestring): The name of an existing, managed
+            :class:`terrarium.Environment` instance.
 
     Returns:
-        JSON string containing class::`Environment` data
+        JSON string containing :class:`terrarium.Environment` data
     """
     _LOG.debug('Export Started: Environment "{0}" to JSON'.format(environment_name))
 
@@ -185,14 +187,15 @@ def export_environment(environment_name):
 
 def import_runtime_profile(runtime_profile_data, force=False):
     """
-    Creates a managed class::`RuntimeProfile` instance from JSON data.
+    Creates a managed :class:`terrarium.RuntimeProfile` instance from JSON data.
 
     Args:
-        runtime_profile_data (str): JSON string with class::`RuntimeProfile` data
-        force: If True and an existing profile is found, it will be updated
+        runtime_profile_data (basestring): JSON string with
+        :class:`terrarium.RuntimeProfile` data force (bool): If True and an
+        existing profile is found, it will be updated.
 
     Returns:
-        A class::`RuntimeProfile` instance or None
+        A :class:`RuntimeProfile` instance or None
     """
     _LOG.debug('Import Started: Runtime Profile from JSON')
 
@@ -242,14 +245,14 @@ def import_runtime_profile(runtime_profile_data, force=False):
 
 def export_runtime_profile(runtime_profile_name):
     """
-    Exports a class::`RuntimeProfile` instance to a JSON string.
+    Exports a :class:`terrarium.RuntimeProfile` instance to a JSON string.
 
     Args:
-        runtime_profile_name (str): The name of an existing, managed
-            class::`RuntimeProfile` instance.
+        runtime_profile_name (basestring): The name of an existing, managed
+            :class:`terrarium.RuntimeProfile` instance.
 
     Returns:
-        JSON string containing class::`RuntimeProfile` data
+        JSON string containing :class:`terrarium.RuntimeProfile` data
     """
     _LOG.debug('Export Started: Runtime Profile "{0}" to JSON'.format(runtime_profile_name))
 

@@ -9,8 +9,8 @@ _LOG = logging.getLogger(__name__)
 
 class RuntimeProfileManager(ResourceManager):
     """
-    class::`RuntimeProfileManager` provides CRUD-L services for
-    class::`RuntimeProfile` data.
+    :class:`RuntimeProfileManager` provides CRUD-L services for
+    :class:`RuntimeProfile` data.
     """
     _resource_type = RuntimeProfile
     _resource_collection = {}
@@ -26,15 +26,15 @@ class RuntimeProfileManager(ResourceManager):
     @classmethod
     def get_runtime_profile(cls, name):
         """
-        Attempts to retrieve an class::`RuntimeProfile` that matches the
+        Attempts to retrieve an :class:`RuntimeProfile` that matches the
         ``name`` argument exactly.
 
         Args:
-            name: The name of an existing class::`RuntimeProfile`.
+            name: The name of an existing :class:`RuntimeProfile`.
 
         Returns:
-            class::`RuntimeProfile` instance or None if no
-                class::`RuntimeProfile` is found matching ``name``.
+            :class:`RuntimeProfile` instance or None if no
+                :class:RuntimeProfile` is found matching ``name``.
         """
         return cls._get_resource(name)
 
@@ -43,19 +43,19 @@ class RuntimeProfileManager(ResourceManager):
             cls, name, new_name=None, new_description=None, new_app=None,
             new_environment=None, new_cmd_args=None, new_cmd_kwargs=None):
         """
-        Update an existing class::`RuntimeProfile`.
+        Update an existing :class:`RuntimeProfile`.
 
         Each call to ``update_runtime_profile`` is transactional. If any part
         of the update fails, the entire update will fail.
 
         Args:
-            name (basestring): Name of an existing class::`RuntimeProfile`.
-            new_name (basestring): New name for the class::`RuntimeProfile`.
+            name (basestring): Name of an existing :class:`RuntimeProfile`.
+            new_name (basestring): New name for the :class:`RuntimeProfile`.
             new_description (basestring): New description for the
-                class::`RuntimeProfile`.
-            new_app (basestring): Name of an existing class::`App`.
+                :class:`RuntimeProfile`.
+            new_app (basestring): Name of an existing :class:`App`.
             new_environment (basestring): Name of an existing
-                class::`Environment`.
+                :class:`Environment`.
             new_cmd_args (list(basestring)): Arguments to be passed to the App
                 executable.
             new_cmd_kwargs (dict(basestring: basestring)): Keyword Arguments to
@@ -79,24 +79,24 @@ class RuntimeProfileManager(ResourceManager):
     @classmethod
     def delete_runtime_profile(cls, name):
         """
-        Remove all data describing an class::`RuntimeProfile`
+        Remove all data describing an :class:`RuntimeProfile`
 
         Args:
-            name (basestring): Name of an existing class::`RuntimeProfile`.
+            name (basestring): Name of an existing :class:`RuntimeProfile`.
         """
         cls._delete_resource(name)
 
     @classmethod
     def find_runtime_profiles(cls, name_pattern=None):
         """
-        Computes a list of all managed class::`RuntimeProfile` instances
+        Computes a list of all managed :class:`RuntimeProfile` instances
         matching various criteria.
 
         Args:
             name_pattern (basestring): Used to regex match profile names.
 
         Returns:
-            List[class::`RuntimeProfile`]
+            List[:class:`RuntimeProfile`]
         """
         attr_patterns = [('name', name_pattern)]
         result = cls._find_resources(attr_patterns)

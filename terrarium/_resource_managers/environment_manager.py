@@ -9,8 +9,8 @@ _LOG = logging.getLogger(__name__)
 
 class EnvironmentManager(ResourceManager):
     """
-    class::`EnvironmentManager` provides CRUD-L services for
-    class::`Environment` data.
+    :class:`EnvironmentManager` provides CRUD-L services for
+    :class:`Environment` data.
     """
     _resource_type = Environment
     _resource_collection = {}
@@ -25,16 +25,16 @@ class EnvironmentManager(ResourceManager):
         the EnvironmentManager.
 
         Args:
-            name (basestring): Name for the class::`Environment`. Must be
-                unique relative to other managed class::`Environment`s.
+            name (basestring): Name for the :class:`Environment`. Must be
+                unique relative to other managed :class:`Environment` instances.
             description: User-friendly description of the environment.
             parent (Optional[basestring]): Name of another
-                class::`Environment`. Defaults to None.
+                :class:`Environment`. Defaults to None.
             variables (dict): Key value pairs describing environment variables
                 and their values
 
         Returns:
-            An class::`Environment` instance.
+            An :class:`Environment` instance.
         """
         return cls._create_resource(name, parent=parent, variables=variables,
                                     description=description)
@@ -42,14 +42,14 @@ class EnvironmentManager(ResourceManager):
     @classmethod
     def get_environment(cls, name):
         """
-        Attempts to retrieve an class::`Environment` that matches the ``name``
+        Attempts to retrieve an :class:`Environment` that matches the ``name``
         argument exactly.
 
         Args:
-            name: The name of an existing class::`Environment`.
+            name: The name of an existing :class:`Environment`.
 
         Returns:
-            class::`Environment` instance or None if no class::`Environment` is
+            :class:`Environment` instance or None if no :class:`Environment` is
                 found matching ``name``.
         """
         return cls._get_resource(name)
@@ -58,7 +58,7 @@ class EnvironmentManager(ResourceManager):
     def update_environment(cls, name, new_name=None, new_description=None,
                            new_parent=None, update_variables=None):
         """
-        Update an existing class::`Environment`.
+        Update an existing :class:`Environment`.
 
         Each call to update_environment is transactional. If any part of the
             update fails, the entire update will fail.
@@ -85,24 +85,24 @@ class EnvironmentManager(ResourceManager):
     @classmethod
     def delete_environment(cls, name):
         """
-        Remove all data describing an class::`Environment`
+        Remove all data describing an :class:Environment`
 
         Args:
-            name (basestring): Name of an existing class::`Environment`.
+            name (basestring): Name of an existing :class:`Environment`.
         """
         cls._delete_resource(name)
 
     @classmethod
     def find_environments(cls, name_pattern=None):
         """
-        Computes a list of all managed class::`Environment` instances matching
+        Computes a list of all managed :class:`Environment` instances matching
         various criteria.
 
         Args:
             name_pattern (basestring): Used to regex match Environment names.
 
         Returns:
-            List[class::`Environment`]
+            List[:class:`Environment`]
         """
         attr_patterns = [('name', name_pattern)]
         result = cls._find_resources(attr_patterns)
