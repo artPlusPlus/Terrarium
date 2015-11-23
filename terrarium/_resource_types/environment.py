@@ -17,9 +17,10 @@ class Environment(object):
     """
     Represents a Runtime Environment for an App.
 
-    Environments hold environment variable data and can be structured hierarchically.
-    They have the ability to expand and compress values based on the variable data
-    available to themselves and hierarchical their ancestors.
+    Environments hold environment variable data and can be structured
+    hierarchically. They have the ability to expand and compress values based
+    on the variable data available to themselves and hierarchical their
+    ancestors.
     """
     @property
     def name(self):
@@ -40,18 +41,23 @@ class Environment(object):
             if value:
                 self._name = value
             else:
-                raise ValueError('Environment name cannot be empty.')
+                msg = 'Environment name cannot be empty.'
+                _LOG.error(msg)
+                raise ValueError(msg)
         else:
-            raise ValueError('Environment name must be a non-empty string.')
+            msg = 'Environment name must be a non-empty string.'
+            _LOG.error(msg)
+            raise ValueError(msg)
 
     @property
     def parent(self):
         """
         The name of the parent Environment.
 
-        When resolving variables, the Environment will first look at its own data.
-        If the variable is not found, it will look up to its parent. This will repeat
-        until the variable is resolved or an Environment is reached that has no parent.
+        When resolving variables, the Environment will first look at its own
+        data. If the variable is not found, it will look up to its parent. This
+        will repeat until the variable is resolved or an Environment is reached
+        that has no parent.
 
         Returns:
             The name of the parent Environment or None.
@@ -66,14 +72,17 @@ class Environment(object):
             value = unicode(value).strip() or None
             self._parent = value
         else:
-            raise ValueError('Environment parent must be a non-empty string.')
+            msg = 'Environment parent must be a non-empty string.'
+            _LOG.error(msg)
+            raise ValueError(msg)
 
     @property
     def description(self):
         """
         Description of the Environment.
 
-        The description should offer a high-level view of the variables and intended usage.
+        The description should offer a high-level view of the variables and
+        intended usage.
 
         Returns:
             The description as a string.
@@ -112,9 +121,9 @@ class Environment(object):
         Instantiates a new Environment instance.
 
         Args:
-            name (str): A User/UI friendly name.
-            parent (str): The name of an existing Environment
-            description (str): A User/UI friendly description.
+            name (basestring): A User/UI friendly name.
+            parent (basestring): The name of an existing Environment
+            description (basestring): A User/UI friendly description.
 
         Returns:
             None
@@ -144,31 +153,31 @@ class Environment(object):
             * %name%
 
         Args:
-            value (str): A string containing environment variables.
-            var_format (str): String format expression used to generate a
-                variables final output form.
+            value (basestring): A string containing environment variables.
+            var_format (basestring): String format expression used to generate
+                a variables final output form.
                 Example: '%{0}%'
             use_runtime_environment (bool): If true, once the Environment
                 instance has resolved all the variables it can, the runtime
                 environment is invoked to resolve any remaining variables.
-            overrides ({str:str}): Mapping of environment variable names and
-                values. If a variable name key matches an environment variable
-                defined in the Environment instance, the value from the
-                override map is used. If an override has no match in the
-                Environment instance, it will not be used at all.
+            overrides ({basestring:basestring}): Mapping of environment
+                variable names and values. If a variable name key matches an
+                environment variable defined in the Environment instance, the
+                value from the override map is used. If an override has no
+                match in the Environment instance, it will not be used at all.
 
         Return:
             The argument with environment variables expanded.
         """
+        value = unicode(value).strip()
         value = os.path.normpath(value)
-
-        result = str(value)
+        result = value
 
         if not overrides:
             overrides = {}
 
         if not var_format:
-            var_format = '%{0}%'.format
+            var_format = u'%{0}%'.format
         elif isinstance(var_format, basestring):
             var_format = str(var_format).format
 
@@ -215,28 +224,28 @@ class Environment(object):
         non-overlapping value matches.
 
         Args:
-            value (str): Object to condense
-            var_format (str): String format expression used to generate a
-                variables final output form.
+            value (basestring): Object to condense
+            var_format (basestring): String format expression used to generate
+                a variables final output form.
                 Example: '%{0}%'
             use_runtime_environment (bool): If true, once the Environment
                 instance has resolved all the variables it can, the runtime
                 environment is invoked to resolve any remaining variables.
-            overrides ({str:str}): Mapping of environment variable names and
-                values. If a variable name key matches an environment variable
-                defined in the Environment instance, the value from the
-                override map is used. If an override has no match in the
-                Environment instance, it will not be used at all.
+            overrides ({basestring:basestring}): Mapping of environment
+                variable names and values. If a variable name key matches an
+                environment variable defined in the Environment instance, the
+                value from the override map is used. If an override has no
+                match in the Environment instance, it will not be used at all.
 
         Return:
             The argument with environment variables condensed.
         """
+        value = unicode(value).strip()
         value = os.path.normpath(value)
-
-        result = str(value)
+        result = value
 
         if not var_format:
-            var_format = '%{0}%'.format
+            var_format = u'%{0}%'.format
         elif isinstance(var_format, basestring):
             var_format = str(var_format).format
 
@@ -279,8 +288,8 @@ class Environment(object):
         Sets the value of an Environment variable
 
         Args:
-            name (str): The name of the Environment Setting
-            value (str): The value to associate with the named Setting
+            name (basestring): The name of the Environment Setting
+            value (basestring): The value to associate with the named Setting
 
         Returns:
             None
@@ -299,12 +308,15 @@ class Environment(object):
             match = _VAR_PATTERN.search(value)
             if not match:
                 break
-            value = value.replace(match.group(0), _INTERNAL_VAR_FORMAT(match.group('var')))
+            value = value.replace(match.group(0),
+                                  _INTERNAL_VAR_FORMAT(match.group('var')))
 
         if name in self._vars:
-            msg = 'Updated Environment "{0}": MOD variable "{1}"'.format(self.name, name)
+            msg = 'Updated Environment "{0}": MOD variable "{1}"'.format(
+                self.name, name)
         else:
-            msg = 'Updated Environment "{0}": ADD variable "{1}"'.format(self.name, name)
+            msg = 'Updated Environment "{0}": ADD variable "{1}"'.format(
+                self.name, name)
         self._vars[name] = os.path.normpath(value)
         _LOG.debug(msg)
 
@@ -362,7 +374,8 @@ class Environment(object):
         self._set_var(name, value)
 
     def __delitem__(self, name):
-        msg = 'Updated Environment "{0}": DEL variable "{1}"'.format(self.name, name)
+        msg = 'Updated Environment "{0}": DEL variable "{1}"'.format(
+            self.name, name)
         del self._vars[name]
         _LOG.debug(msg)
 

@@ -9,56 +9,67 @@ _LOG = logging.getLogger(__name__)
 
 class EnvironmentManager(ResourceManager):
     """
-    class::`EnvironmentManager` provides CRUD-L services for class::`Environment` data.
+    class::`EnvironmentManager` provides CRUD-L services for
+    class::`Environment` data.
     """
     _resource_type = Environment
     _resource_collection = {}
 
     @classmethod
-    def create_environment(cls, name, description=None, parent=None, variables=None):
+    def create_environment(cls, name, description=None, parent=None,
+                           variables=None):
         """
         Attempts to create a new Environment instance.
 
-        Any Environments created through the EnvironmentManager are managed by the EnvironmentManager.
+        Any Environments created through the EnvironmentManager are managed by
+        the EnvironmentManager.
 
         Args:
-            name (basestring): Name for the class::`Environment`. Must be unique relative to other managed
-                class::`Environment`s.
+            name (basestring): Name for the class::`Environment`. Must be
+                unique relative to other managed class::`Environment`s.
             description: User-friendly description of the environment.
-            parent (basestring): Name of another class::`Environment`.
-            variables (dict): Key value pairs describing environment variables and their values
+            parent (Optional[basestring]): Name of another
+                class::`Environment`. Defaults to None.
+            variables (dict): Key value pairs describing environment variables
+                and their values
 
         Returns:
             An class::`Environment` instance.
         """
-        return cls._create_resource(name, parent=parent, variables=variables, description=description)
+        return cls._create_resource(name, parent=parent, variables=variables,
+                                    description=description)
 
     @classmethod
     def get_environment(cls, name):
         """
-        Attempts to retrieve an class::`Environment` that matches the ``name`` argument exactly.
+        Attempts to retrieve an class::`Environment` that matches the ``name``
+        argument exactly.
 
         Args:
             name: The name of an existing class::`Environment`.
 
         Returns:
-            class::`Environment` instance or None if no class::`Environment` is found matching ``name``.
+            class::`Environment` instance or None if no class::`Environment` is
+                found matching ``name``.
         """
         return cls._get_resource(name)
 
     @classmethod
-    def update_environment(cls, name, new_name=None, new_description=None, new_parent=None, update_variables=None):
+    def update_environment(cls, name, new_name=None, new_description=None,
+                           new_parent=None, update_variables=None):
         """
         Update an existing class::`Environment`.
 
-        Each call to update_environment is transactional. If any part of the update fails, the entire update will fail.
+        Each call to update_environment is transactional. If any part of the
+            update fails, the entire update will fail.
 
         Args:
             name (basestring): Name of an existing Environment.
             new_name (basestring): New name for the Environment.
             new_description (basestring): New description for the Environment.
             new_parent (basestring): Name of an existing Environment.
-            update_variables (basestring): New key-value pairs representing environment variable names and values.
+            update_variables (basestring): New key-value pairs representing
+                environment variable names and values.
         """
         update_kwargs = {}
         if new_name is not None:
@@ -84,7 +95,8 @@ class EnvironmentManager(ResourceManager):
     @classmethod
     def find_environments(cls, name_pattern=None):
         """
-        Computes a list of all managed class::`Environment` instances matching various criteria.
+        Computes a list of all managed class::`Environment` instances matching
+        various criteria.
 
         Args:
             name_pattern (basestring): Used to regex match Environment names.

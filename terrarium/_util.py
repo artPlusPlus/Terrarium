@@ -15,9 +15,11 @@ _FMT_CMD_RUN = 'RUN {0}\n'.format
 
 def apply_environment(environment, overrides=None):
     """
-    Pushes the Environment instance's variable data into the current runtime environment.
+    Pushes the Environment instance's variable data into the current runtime
+    environment.
 
-    If a failure occurs while applying a value, any previous value changes will be reverted.
+    If a failure occurs while applying a value, any previous value changes will
+    be reverted.
 
     Args:
         environment (string): Name of an existing Environment

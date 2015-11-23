@@ -1,4 +1,5 @@
-"""Hospitable runtime environments for applications.
+"""
+Hospitable runtime environments for applications.
 
 Author:
     Matt Robinson <matt@technicalartisan.com>

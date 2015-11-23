@@ -7,9 +7,9 @@ def test_app_instantiation():
     app = terrarium.App('Test', '%ROOT%', 'Test.exe')
 
     assert app
-    assert app.name == 'Test'
-    assert app.location == '%ROOT%'
-    assert app.executable == 'Test.exe'
+    assert app.name == u'Test'
+    assert app.location == u'%ROOT%'
+    assert app.executable == u'Test.exe'
 
 
 def test_app_equivalency():

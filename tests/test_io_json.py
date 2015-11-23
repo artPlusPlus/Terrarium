@@ -37,7 +37,7 @@ def test_import_app_force():
     assert isinstance(updated_app, terrarium.App)
     assert updated_app is orig_app
     assert updated_app is terrarium.AppManager.get_app('TestApp')
-    assert updated_app.executable == 'Pass.exe'
+    assert updated_app.executable == u'Pass.exe'
 
 
 def test_export_app():
@@ -79,7 +79,7 @@ def test_import_environment_force():
     assert isinstance(updated_env, terrarium.Environment)
     assert updated_env is orig_env
     assert updated_env is terrarium.EnvironmentManager.get_environment('TestEnv')
-    assert updated_env.parent == 'Pass'
+    assert updated_env.parent == u'Pass'
 
 
 def test_import_runtime_profile():
@@ -110,10 +110,11 @@ def test_import_runtime_profile_force():
     with pytest.raises(terrarium.ResourceAlreadyExistsError):
         terrarium.json.import_runtime_profile(profile_data)
 
-    updated_profile = terrarium.json.import_runtime_profile(profile_data, force=True)
+    updated_profile = terrarium.json.import_runtime_profile(profile_data,
+                                                            force=True)
 
     assert isinstance(updated_profile, terrarium.RuntimeProfile)
     assert updated_profile is orig_profile
     assert updated_profile is terrarium.RuntimeProfileManager.get_runtime_profile('TestProfile')
-    assert updated_profile.app == 'PassApp'
-    assert updated_profile.environment == 'PassEnv'
+    assert updated_profile.app == u'PassApp'
+    assert updated_profile.environment == u'PassEnv'

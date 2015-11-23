@@ -12,8 +12,9 @@ _LOG = logging.getLogger(__name__)
 def _environment(request):
     _LOG.debug('create _environment')
 
-    env = terrarium.EnvironmentManager.create_environment('Test', parent=None,
-                                                          description='This is a Test Environment.')
+    env = terrarium.EnvironmentManager.create_environment(
+        'Test', parent=None, description='This is a Test Environment.')
+
     def fin():
         terrarium.EnvironmentManager.delete_environment(env.name)
         _LOG.debug('teardown _environment')
@@ -24,9 +25,9 @@ def _environment(request):
 
 def test_env_creation(_environment):
     assert _environment
-    assert _environment.name == 'Test'
+    assert _environment.name == u'Test'
     assert _environment.parent is None
-    assert _environment.description == 'This is a Test Environment.'
+    assert _environment.description == u'This is a Test Environment.'
 
 
 def test_env_deletion(_environment):
@@ -46,11 +47,11 @@ def test_env_retrieval(_environment):
 
 
 def test_env_update_name(_environment):
-    assert _environment.name == 'Test'
+    assert _environment.name == u'Test'
 
     terrarium.EnvironmentManager.update_environment('Test', new_name='Pass')
 
-    assert _environment.name == 'Pass'
+    assert _environment.name == u'Pass'
 
 
 def test_env_update_parent(_environment):
@@ -58,13 +59,14 @@ def test_env_update_parent(_environment):
 
     terrarium.EnvironmentManager.update_environment('Test', new_parent='Pass')
 
-    assert _environment.parent == 'Pass'
+    assert _environment.parent == u'Pass'
 
 
 def test_env_update_description(_environment):
-    terrarium.EnvironmentManager.update_environment('Test', new_description='This is a Pass Environment.')
+    terrarium.EnvironmentManager.update_environment(
+        'Test', new_description='This is a Pass Environment.')
 
-    assert _environment.description == 'This is a Pass Environment.'
+    assert _environment.description == u'This is a Pass Environment.'
 
 
 if __name__ == '__main__':

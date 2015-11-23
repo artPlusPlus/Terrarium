@@ -9,9 +9,14 @@ from .._errors import ResourceNotFoundError, ResourceAlreadyExistsError
 
 _LOG = logging.getLogger(__name__)
 
-_FMT_BASE_MISSING_FIELD = 'Failed to load {0} data: No "{{0}}" field found.'.format
-_FMT_BASE_NULL_DATA = 'Failed to load {0} data: No "{{0}}" field found.'.format
-_FMT_BASE_EMPTY_DATA = 'Failed to load {0} data: No "{{0}}" field found.'.format
+_FMT_BASE_MISSING_FIELD = 'Failed to load {0} data: No "{{0}}" field found.'
+_FMT_BASE_MISSING_FIELD = _FMT_BASE_MISSING_FIELD.format
+
+_FMT_BASE_NULL_DATA = 'Failed to load {0} data: No "{{0}}" field found.'
+_FMT_BASE_NULL_DATA = _FMT_BASE_NULL_DATA.format
+
+_FMT_BASE_EMPTY_DATA = 'Failed to load {0} data: No "{{0}}" field found.'
+_FMT_BASE_EMPTY_DATA = _FMT_BASE_EMPTY_DATA.format
 
 
 def import_app(app_data, force=False):
@@ -48,11 +53,14 @@ def import_app(app_data, force=False):
     app_description = get_data_field('description')
 
     try:
-        result = AppManager.create_app(app_name, app_location, app_executable, description=app_description)
+        result = AppManager.create_app(app_name, app_location, app_executable,
+                                       description=app_description)
     except ResourceAlreadyExistsError:
         if force:
-            _LOG.debug('Import Forced: App "{0}" already exists'.format(app_name))
-            AppManager.update_app(app_name, new_location=app_location, new_executable=app_executable,
+            msg = 'Import Forced: App "{0}" already exists'.format(app_name)
+            _LOG.debug(msg)
+            AppManager.update_app(app_name, new_location=app_location,
+                                  new_executable=app_executable,
                                   new_description=app_description)
             result = AppManager.get_app(app_name)
         else:
@@ -98,7 +106,7 @@ def import_environment(environment_data, force=False):
 
     Args:
         environment_data (str): JSON string with class::`Environment` data
-        force: If True and an existing environment is found, it will be updated
+        force: If True and an existing environment is found, it will be updated.
 
     Returns:
         An class::`Environment` instance or None
@@ -126,13 +134,16 @@ def import_environment(environment_data, force=False):
     env_description = get_data_field('description')
 
     try:
-        result = EnvironmentManager.create_environment(env_name, parent=env_parent, variables=env_variables,
-                                                       description=env_description)
+        result = EnvironmentManager.create_environment(
+            env_name, parent=env_parent, variables=env_variables,
+            description=env_description)
     except ResourceAlreadyExistsError:
         if force:
-            _LOG.debug('Import Forced: Environment "{0}" already exists'.format(env_name))
-            EnvironmentManager.update_environment(env_name, new_parent=env_parent, update_variables=env_variables,
-                                                  new_description=env_description)
+            msg = 'Import Forced: Environment "{0}" already exists'.format(env_name)
+            _LOG.debug(msg)
+            EnvironmentManager.update_environment(
+                env_name, new_parent=env_parent, update_variables=env_variables,
+                new_description=env_description)
             result = EnvironmentManager.get_environment(env_name)
         else:
             msg = 'Import Failed: Environment "{0}" already exists'.format(env_name)
@@ -148,7 +159,8 @@ def export_environment(environment_name):
     Exports an class::`Environment` instance to a JSON string.
 
     Args:
-        environment_name (str): The name of an existing, managed class::`Environment` instance.
+        environment_name (str): The name of an existing, managed
+            class::`Environment` instance.
 
     Returns:
         JSON string containing class::`Environment` data
@@ -208,14 +220,16 @@ def import_runtime_profile(runtime_profile_data, force=False):
 
     try:
         result = RuntimeProfileManager.create_runtime_profile(
-            profile_name, profile_app, profile_env, cmd_args=profile_args, cmd_kwargs=profile_kwargs,
-            description=profile_description)
+            profile_name, profile_app, profile_env, cmd_args=profile_args,
+            cmd_kwargs=profile_kwargs, description=profile_description)
     except ResourceAlreadyExistsError:
         if force:
-            _LOG.debug('Import Forced: Runtime Profile "{0}" already exists'.format(profile_name))
+            msg = 'Import Forced: Runtime Profile "{0}" already exists'.format(profile_name)
+            _LOG.debug(msg)
             RuntimeProfileManager.update_runtime_profile(
-                profile_name, new_app=profile_app, new_environment=profile_env, new_cmd_args=profile_args,
-                new_cmd_kwargs=profile_kwargs, new_description=profile_description)
+                profile_name, new_app=profile_app, new_environment=profile_env,
+                new_cmd_args=profile_args, new_cmd_kwargs=profile_kwargs,
+                new_description=profile_description)
             result = RuntimeProfileManager.get_runtime_profile(profile_name)
         else:
             msg = 'Import Failed: Runtime Profile "{0}" already exists'.format(profile_name)
@@ -231,7 +245,8 @@ def export_runtime_profile(runtime_profile_name):
     Exports a class::`RuntimeProfile` instance to a JSON string.
 
     Args:
-        runtime_profile_name (str): The name of an existing, managed class::`RuntimeProfile` instance.
+        runtime_profile_name (str): The name of an existing, managed
+            class::`RuntimeProfile` instance.
 
     Returns:
         JSON string containing class::`RuntimeProfile` data
@@ -256,7 +271,8 @@ def export_runtime_profile(runtime_profile_name):
     return json.dumps(profile_data)
 
 
-def _get_data_field(data, field_name, fmt_missing_field=None, fmt_null_data=None, fmt_empty_data=None):
+def _get_data_field(data, field_name, fmt_missing_field=None,
+                    fmt_null_data=None, fmt_empty_data=None):
     result = None
 
     try:

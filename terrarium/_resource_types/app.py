@@ -2,7 +2,8 @@ class App(object):
     """
     Represents an executable application.
 
-    Apps handle the path to an executable location. This path data is stored in two parts:
+    Apps handle the path to an executable location. This path data is stored in
+    two parts:
         - The 'location' is the path to the directory containing the executable
         - The 'executable' is he executable file name.
     """
@@ -11,8 +12,8 @@ class App(object):
         """
         The name of the application.
 
-        This may differ from the name of the executable and is meant to be
-        user and UI friendly.
+        This may differ from the name of the executable and is meant to be user
+        and UI friendly.
 
         Returns:
             The user/UI friendly name of the application as a string.
@@ -98,10 +99,10 @@ class App(object):
         Initializes an instance of an App.
 
         Args:
-            name (str): User/UI friendly name for the App.
-            location (str): Disk location of the Apps executable.
+            name (basestring): User/UI friendly name for the App.
+            location (basestring): Disk location of the Apps executable.
                 Can contain environment variables.
-            executable (str): Name of the Apps executable.
+            executable (basestring): Name of the Apps executable.
                 Can contain environment variables.
         """
         super(App, self).__init__()

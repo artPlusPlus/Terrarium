@@ -14,7 +14,10 @@ class ResourceCreationError(TerrariumError):
 
 
 class ResourceAlreadyExistsError(ResourceCreationError):
-    """Raised when trying to create a resource that matches the name of an existing resource."""
+    """
+    Raised when trying to create a resource that matches the name of an
+    existing resource.
+    """
     pass
 
 
@@ -24,5 +27,8 @@ class ResourceUpdateError(TerrariumError):
 
 
 class ResourceAttributeNotFoundError(ResourceUpdateError):
-    """Raised when attempting to update a resource that does not have the target attribute"""
+    """
+    Raised when attempting to update a resource that does not have the target
+    attribute
+    """
     pass
