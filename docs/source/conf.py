@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Terrarium'
-copyright = u'2014, Matt Robinson'
+copyright = u'2014-2015, Matt Robinson'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the

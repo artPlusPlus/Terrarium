@@ -4,8 +4,8 @@ Welcome to Terrarium
 Terrarium is a library for managing application runtime environments.
 
 
-User's Guide
-------------
+User Guide
+----------
 
 This section will walk through the different parts of Terrarium and how
 they all work together.
@@ -29,5 +29,6 @@ Additional Information
 .. toctree::
    :maxdepth: 2
 
+   python_3
    license
 
