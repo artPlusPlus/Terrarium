@@ -78,7 +78,7 @@ def export_app(app_name):
 
     Args:
         app_name (basestring): The name of an existing, managed
-        :class:`terrarium.App` instance.
+            :class:`terrarium.App` instance.
 
     Returns:
         JSON string containing :class:`terrarium.App` data
@@ -107,8 +107,9 @@ def import_environment(environment_data, force=False):
 
     Args:
         environment_data (basestring): JSON string with
-        :class:`terrarium.Environment` data force (bool): If True and an
-        existing environment is found, it will be updated.
+            :class:`terrarium.Environment` data
+        force (bool): If True and an existing environment is found,
+            it will be updated.
 
     Returns:
         An :class:`Environment` instance or None
@@ -191,8 +192,9 @@ def import_runtime_profile(runtime_profile_data, force=False):
 
     Args:
         runtime_profile_data (basestring): JSON string with
-        :class:`terrarium.RuntimeProfile` data force (bool): If True and an
-        existing profile is found, it will be updated.
+            :class:`terrarium.RuntimeProfile` data
+        force (bool): If True and an existing profile is found, it will be
+            updated.
 
     Returns:
         A :class:`RuntimeProfile` instance or None

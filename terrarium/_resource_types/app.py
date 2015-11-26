@@ -3,8 +3,8 @@ class App(object):
     Represents an executable application.
 
     Apps handle the path to an executable location. This path data is stored in two parts:
-        - The 'location' is the path to the directory containing the executable
-        - The 'executable' is he executable file name.
+        - The ``location`` is the path to the directory containing the executable
+        - The ``executable`` is he executable file name.
     """
     @property
     def name(self):
